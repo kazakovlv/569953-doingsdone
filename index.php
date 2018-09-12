@@ -1,6 +1,10 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
+$checkbox_complete_tasks = null;
+if($show_complete_tasks == 1) {
+    $checkbox_complete_tasks = "checked";
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -97,7 +101,7 @@ $show_complete_tasks = rand(0, 1);
 
                     <label class="checkbox">
                         <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
-                        <input class="checkbox__input visually-hidden show_completed" type="checkbox">
+                        <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?=$checkbox_complete_tasks; ?> >
                         <span class="checkbox__text">Показывать выполненные</span>
                     </label>
                 </div>
