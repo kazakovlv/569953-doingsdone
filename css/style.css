@@ -12,19 +12,21 @@
   src: url("../fonts/opensans-bold-webfont.woff2") format("woff2"), url("../fonts/opensans-bold-webfont.woff") format("woff");
 }
 
-.visually-hidden {
+.visually-hidden:not(:focus):not(:active),
+input.visually-hidden {
   position: absolute;
 
   width: 1px;
   height: 1px;
   margin: -1px;
-  padding: 0;
-  overflow: hidden;
-
   border: 0;
+  padding: 0;
 
-  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
   clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
 }
 
 html,
@@ -35,6 +37,7 @@ body {
 .page-wrapper {
   min-height: 100%;
   margin-bottom: -120px;
+  display: flex;
 }
 
 .page-wrapper::after {
@@ -92,10 +95,8 @@ a:focus {
   top: 0;
   left: calc(-50vw + 280px);
   z-index: -1;
-
   width: 50vw;
-  height: 100vh;
-
+  height: 100%;
   background-color: #f9fafc;
 }
 
@@ -251,6 +252,7 @@ a:focus {
 
 .content {
   display: flex;
+  margin-bottom: 120px;
 }
 
 .content__side {
@@ -640,6 +642,8 @@ a:focus {
 }
 
 .main-footer {
+  position: relative;
+
   padding: 13px 0;
 
   background-color: #d7dbe8;
@@ -671,13 +675,13 @@ a:focus {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  margin-left: auto;
 }
 
 .social__link {
   width: 27px;
   height: 27px;
-
-  font-size: 0;
 }
 
 .social__link:hover path {
