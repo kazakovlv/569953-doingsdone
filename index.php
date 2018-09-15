@@ -1,8 +1,10 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
-$project_List = ["Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
-$task_list = [
+$projectList = ["Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
+$projectList_count = count($projectList); // количество страниц
+$projectList_curPage = 0; // номер текущей страницы
+$taskList = [
     0 => [
         "task" => "Задача",
         "completion" => "Дата выполнения",
@@ -93,10 +95,13 @@ $task_list = [
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
+                    <?php while ($projectList_curPage < $projectList_count): ?>
                         <li class="main-navigation__list-item">
-                            <a class="main-navigation__list-item-link" href="#">Название проекта</a>
+                            <a class="main-navigation__list-item-link" href="#"><?=$projectList[$projectList_curPage]; ?></a>
                             <span class="main-navigation__list-item-count">0</span>
                         </li>
+                        <?php $projectList_curPage++; ?>
+                        <?php endwhile; ?>
                     </ul>
                 </nav>
 
