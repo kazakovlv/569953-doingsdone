@@ -1,6 +1,53 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
+$project_List = ["Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
+$task_list = [
+    0 => [
+        "task" => "Задача",
+        "completion" => "Дата выполнения",
+        "category" => "Категория",
+        "completed" => "Выполнен"
+    ],
+    1 => [
+        "task" => "Собеседование в IT компании",
+        "completion" => "	01.12.2018",
+        "category" => "Работа",
+        "completed" => "Нет"
+    ],
+    2 => [
+        "task" => "Выполнить тестовое задание",
+        "completion" => "25.12.2018",
+        "category" => "Работа",
+        "completed" => "Нет"
+    ],
+    3 => [
+        "task" => "Сделать задание первого раздела",
+        "completion" => "21.12.2018",
+        "category" => "Учеба",
+        "completed" => "Да"
+    ],
+    4 => [
+        "task" => "Встреча с другом",
+        "completion" => "22.12.2018",
+        "category" => "Входящие",
+        "completed" => "Нет"
+    ],
+    5 => [
+        "task" => "Купить корм для кота",
+        "completion" => "Нет",
+        "category" => "Домашние дела",
+        "completed" => "Нет"
+    ],
+    6 => [
+        "task" => "Заказать пиццу",
+        "completion" => "Нет",
+        "category" => "Домашние дела",
+        "completed" => "Нет"
+    ]
+];
+
+//var_dump($project_List);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
