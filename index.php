@@ -42,7 +42,7 @@ $taskList = [
         "completed" => "Нет"
     ]
 ];
-
+$taskCurrent = 0; //Порядковый номер выбранного чекбокса
 //var_dump($taskList[0]);
 ?>
 <!DOCTYPE html>
@@ -182,7 +182,7 @@ $taskList = [
                         <tr class="tasks__item task">
                             <td class="task__select">
                                 <label class="checkbox task__checkbox">
-                                    <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                                    <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value=<?=$taskCurrent;?>>
                                     <span class="checkbox__text"><?=$val['task'];?></span>
                                 </label>
                             </td>
@@ -193,7 +193,11 @@ $taskList = [
                             </td>-->
                         </tr>
                     <?php endif; ?>
-                  <?php endforeach; ?>
+
+                  <?php
+                    $taskCurrent ++;
+                    endforeach;
+                  ?>
 <!-- Конец вставки -->
                 </table>
             </main>
