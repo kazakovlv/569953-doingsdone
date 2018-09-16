@@ -43,7 +43,7 @@ $taskList = [
     ]
 ];
 
-var_dump($taskList[0]);
+//var_dump($taskList[0]);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -130,6 +130,7 @@ var_dump($taskList[0]);
                 </div>
 
                 <table class="tasks">
+                <!--
                     <tr class="tasks__item task">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
@@ -159,6 +160,41 @@ var_dump($taskList[0]);
                         </td>
                       </tr>
                   <?php endif; ?>
+                  -->
+<!--  Вставка таблицы -->
+                  <?php foreach ($taskList as $key => $val): ?>
+                    <?php if($val['completed'] == 'Да'): ?>
+                    <!-- Завершенное задание-->
+                        <?php if ($show_complete_tasks): ?>
+                        <tr class="tasks__item task task--completed">
+                            <td class="task__select">
+                            <label class="checkbox task__checkbox">
+                                <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                                <span class="checkbox__text"><?=$val['task'];?></span>
+                            </label>
+                            </td>
+                            <td class="task__date"><?=$val['completion'];?></td>
+                            <td class="task__controls"></td>
+                        </tr>
+                        <?php endif; ?>
+                    <?php else: ?>
+                    <!-- Незавершенные задачи-->
+                        <tr class="tasks__item task">
+                            <td class="task__select">
+                                <label class="checkbox task__checkbox">
+                                    <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                                    <span class="checkbox__text"><?=$val['task'];?></span>
+                                </label>
+                            </td>
+                            <td class="task__date"><?=$val['completion'];?></td>
+                            <td class="task__controls"></td>
+                            <!--<td class="task__file">
+                                <a class="download-link" href="#">Home.psd</a>
+                            </td>-->
+                        </tr>
+                    <?php endif; ?>
+                  <?php endforeach; ?>
+<!-- Конец вставки -->
                 </table>
             </main>
         </div>
