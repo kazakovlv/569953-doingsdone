@@ -6,42 +6,36 @@ $projectList_count = count($projectList); // количество страниц
 $projectList_curPage = 0; // номер текущей страницы
 $taskList = [
     0 => [
-        "task" => "Задача",
-        "completion" => "Дата выполнения",
-        "category" => "Категория",
-        "completed" => "Выполнен"
-    ],
-    1 => [
         "task" => "Собеседование в IT компании",
         "completion" => "	01.12.2018",
         "category" => "Работа",
         "completed" => "Нет"
     ],
-    2 => [
+    1 => [
         "task" => "Выполнить тестовое задание",
         "completion" => "25.12.2018",
         "category" => "Работа",
         "completed" => "Нет"
     ],
-    3 => [
+    2 => [
         "task" => "Сделать задание первого раздела",
         "completion" => "21.12.2018",
         "category" => "Учеба",
         "completed" => "Да"
     ],
-    4 => [
+    3 => [
         "task" => "Встреча с другом",
         "completion" => "22.12.2018",
         "category" => "Входящие",
         "completed" => "Нет"
     ],
-    5 => [
+    4 => [
         "task" => "Купить корм для кота",
         "completion" => "Нет",
         "category" => "Домашние дела",
         "completed" => "Нет"
     ],
-    6 => [
+    5 => [
         "task" => "Заказать пиццу",
         "completion" => "Нет",
         "category" => "Домашние дела",
@@ -49,7 +43,7 @@ $taskList = [
     ]
 ];
 
-//var_dump($project_List);
+var_dump($taskList[0]);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
