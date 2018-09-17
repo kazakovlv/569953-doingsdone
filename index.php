@@ -42,8 +42,25 @@ $taskList = [
         "completed" => "Нет"
     ]
 ];
+
 $taskCurrent = 0; //Порядковый номер выбранного чекбокса
-//var_dump($taskList[0]);
+
+function summTask($ListTasks, $taskName)
+{
+    $summItems = 0;
+
+    foreach ($ListTasks as $key => $value)
+    {
+        if($value['category'] == $taskName)
+        {
+            $summItems ++;
+        }
+    }
+
+    return $summItems;
+}
+
+//var_dump($projectList);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -92,9 +109,9 @@ $taskCurrent = 0; //Порядковый номер выбранного чек�
                     <?php while ($projectList_curPage < $projectList_count): ?>
                         <li class="main-navigation__list-item">
                             <a class="main-navigation__list-item-link" href="#"><?=$projectList[$projectList_curPage]; ?></a>
-                            <span class="main-navigation__list-item-count">0</span>
+                            <span class="main-navigation__list-item-count"><?=summTask($taskList, $projectList[$projectList_curPage]); ?></span>
                         </li>
-                        <?php $projectList_curPage++; ?>
+                        <?php $projectList_curPage ++; ?>
                         <?php endwhile; ?>
                     </ul>
                 </nav>
