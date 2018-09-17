@@ -45,14 +45,11 @@ $taskList = [
 
 $taskCurrent = 0; //Порядковый номер выбранного чекбокса
 
-function summTask($ListTasks, $taskName)
-{
+function summTask($ListTasks, $taskName) {
     $summItems = 0;
 
-    foreach ($ListTasks as $key => $value)
-    {
-        if($value['category'] == $taskName)
-        {
+    foreach ($ListTasks as $key => $value) {
+        if($value['category'] == $taskName) {
             $summItems ++;
         }
     }
@@ -106,13 +103,13 @@ function summTask($ListTasks, $taskName)
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                    <?php while ($projectList_curPage < $projectList_count): ?>
+                    <?php while ($projectList_curPage < $projectList_count) { ?>
                         <li class="main-navigation__list-item">
                             <a class="main-navigation__list-item-link" href="#"><?=$projectList[$projectList_curPage]; ?></a>
                             <span class="main-navigation__list-item-count"><?=summTask($taskList, $projectList[$projectList_curPage]); ?></span>
                         </li>
                         <?php $projectList_curPage ++; ?>
-                        <?php endwhile; ?>
+                    <?php } ?>
                     </ul>
                 </nav>
 
@@ -140,8 +137,10 @@ function summTask($ListTasks, $taskName)
                     <label class="checkbox">
                         <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
                         <input class="checkbox__input visually-hidden show_completed"
-                               <?php if ($show_complete_tasks): ?>checked<?php endif; ?>
-                               type="checkbox">
+                            <?php if ($show_complete_tasks) { ?>
+                                checked
+                            <?php } ?>
+                            type="checkbox">
                         <span class="checkbox__text">Показывать выполненные</span>
                     </label>
                 </div>
@@ -179,10 +178,10 @@ function summTask($ListTasks, $taskName)
                   <?php endif; ?>
                   -->
 <!--  Вставка таблицы -->
-                  <?php foreach ($taskList as $key => $val): ?>
-                    <?php if($val['completed'] == 'Да'): ?>
+                  <?php foreach ($taskList as $key => $val) { ?>
+                    <?php if($val['completed'] == 'Да') { ?>
                     <!-- Завершенное задание-->
-                        <?php if ($show_complete_tasks): ?>
+                        <?php if ($show_complete_tasks) { ?>
                         <tr class="tasks__item task task--completed">
                             <td class="task__select">
                             <label class="checkbox task__checkbox">
@@ -193,8 +192,8 @@ function summTask($ListTasks, $taskName)
                             <td class="task__date"><?=$val['completion'];?></td>
                             <td class="task__controls"></td>
                         </tr>
-                        <?php endif; ?>
-                    <?php else: ?>
+                        <?php } ?>
+                    <?php } else { ?>
                     <!-- Незавершенные задачи-->
                         <tr class="tasks__item task">
                             <td class="task__select">
@@ -209,11 +208,10 @@ function summTask($ListTasks, $taskName)
                                 <a class="download-link" href="#">Home.psd</a>
                             </td>-->
                         </tr>
-                    <?php endif; ?>
-
+                    <?php } ?>
                   <?php
                     $taskCurrent ++;
-                    endforeach;
+                    }
                   ?>
 <!-- Конец вставки -->
                 </table>
