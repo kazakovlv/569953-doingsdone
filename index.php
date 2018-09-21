@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/Moscow');
 require_once("functions.php");
 $title = "Дела в порядке";
 // показывать или нет выполненные задачи
@@ -9,7 +10,8 @@ $projectList_curPage = 0; // номер текущей страницы
 $taskList = [
     0 => [
         "task" => "Собеседование в IT компании",
-        "completion" => "01.12.2018",
+        //"completion" => "01.12.2018",
+        "completion" => "20.09.2018",
         "category" => "Работа",
         "completed" => "Нет"
     ],
@@ -59,6 +61,20 @@ function summTask($ListTasks, $taskName) {
     return $summItems;
 }
 
+// Если разница дат текущей и введенной меньше или равно 24 часам возвращает "task--important"
+function isImportant($checking_date) {
+    $marker = "";
+    if (is_numeric(strtotime($checking_date))) {
+        $checking_timestamp = strtotime($checking_date);
+        $now = time();
+        $checking_timestamp = floor(($checking_timestamp - $now)/3600);
+        if ($checking_timestamp <= 24) {
+            $marker = "task--important";
+        }
+    }
+    return $marker;
+}
+
 $page_content = include_template("index.php", ["taskList" =>$taskList,
     "show_complete_tasks" => $show_complete_tasks, "taskCurrent" => $taskCurrent]);
 
@@ -68,4 +84,3 @@ $layout_content = include_template("layout.php",  ["title" => $title, "projectLi
 
 print($layout_content);
 ?>
-

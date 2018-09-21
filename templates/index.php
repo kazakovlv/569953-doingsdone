@@ -35,16 +35,16 @@
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                            <span class="checkbox__text"><?=htmlspecialchars($val['task']);?></span>
+                            <span class="checkbox__text"><?=htmlspecialchars($val["task"]);?></span>
                         </label>
                     </td>
-                    <td class="task__date"><?=htmlspecialchars($val['completion']);?></td>
+                    <td class="task__date"><?=htmlspecialchars($val["completion"]);?></td>
                     <td class="task__controls"></td>
                 </tr>
             <?php } ?>
         <?php } else { ?>
             <!-- Незавершенные задачи-->
-            <tr class="tasks__item task">
+            <tr class="tasks__item task <?=isImportant($val['completion']);?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
                         <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value=<?=$taskCurrent;?>>
