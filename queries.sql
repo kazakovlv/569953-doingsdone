@@ -100,4 +100,67 @@ VALUES
 	( 3, 15, NOW( ), '1970-01-01', 0, 'Роботизация выноса мусора', '', '2018-10-21' );
 
 /*Получить список из всех проектов для одного пользователя */
+SELECT
+	projects.id,
+	projects.project_name 
+FROM
+	projects 
+WHERE
+	projects.id_user = 1;
 
+/*Получить список из всех задач для одного проекта */
+SELECT
+	tasks.id,
+	tasks.date_create,
+	tasks.date_completion,
+	tasks.`status`,
+	tasks.task_name,
+	tasks.file_name,
+	tasks.date_deadline 
+FROM
+	tasks 
+WHERE
+	tasks.id_user = 1 
+	AND tasks.id_project = 2;
+
+/*Пометить задачу как выполненную */
+UPDATE tasks 
+SET tasks.`status` = 1,
+tasks.date_completion = NOW( ) 
+WHERE
+	tasks.id = 3;
+	
+/*Пометить задачу как невыполненную */
+UPDATE tasks 
+SET tasks.`status` = 0,
+tasks.date_completion = '1970-01-01' 
+WHERE
+	tasks.id = 3;
+	
+/*Получить все задачи для завтрашнего дня;*/
+/* Подготовка*/
+UPDATE tasks 
+SET tasks.date_deadline = CURRENT_DATE ( ) + INTERVAL 1 DAY 
+WHERE
+	tasks.id = 4;
+/*Выполнение*/
+SELECT
+	tasks.id,
+	tasks.id_project,
+	tasks.date_create,
+	tasks.date_completion,
+	tasks.`status`,
+	tasks.task_name,
+	tasks.file_name,
+	tasks.date_deadline 
+FROM
+	tasks 
+WHERE
+	tasks.id_user = 1 
+	AND tasks.date_deadline <=  CURRENT_DATE() + INTERVAL 1 DAY;
+
+/*обновить название задачи по её идентификатору*/
+UPDATE tasks 
+SET tasks.task_name = 'Погрузка дивана и стиральной машины' 
+WHERE
+	tasks.id = 4;
