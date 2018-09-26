@@ -85,6 +85,7 @@ function isImportant($checking_date) {
 // Подключение к базе данных
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
 $clientId = 1;
+
 mysqli_set_charset($link, "utf8");
 if (!$link) {
     $error = mysqli_connect_error();
@@ -130,8 +131,57 @@ function showDate($DateTime) {
     }
     return $showDate;
 }
-
 // Конец подключения к БД
+
+/*Уведомления о предстоящих задачах [необязательно]*/
+function getHotTasks($userId, $userName) {
+    global $link;
+    $letter = falae;
+    $sql = "SELECT tasks.task_name, tasks.date_deadline FROM tasks WHERE ";
+    $sql = $sql . "tasks.id_user = ? AND tasks.`status` = 0 AND tasks.date_deadline != \"1970-01-01 00:00:00\" ";
+	$sql = $sql . "AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR )";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt,"i", $userId);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $projectListHot = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    if (count($projectListHot) > 0) {
+        $letter = "Уважаемый/ая " . $userName . " !\n";
+        switch (count($projectListHot)) {
+            case 1:
+                $letter = $letter .  "Обращаем внимание на сроки выполнения задания:\n";
+            break;
+            default:
+                $letter = $letter .  "Обращаем внимание на сроки выполнения ". count($projectListHot) ." заданий:\n";
+            break;
+        }
+        foreach ($projectListHot as $key => $value) {
+            $showDate = date_create($value["date_deadline"]);
+            $showDate = date_format($showDate, "d.m.Y H:i:s");
+            $letter = $letter . $showDate . " - " . $value["task_name"] . "\n";
+        }
+    }
+    return $letter;
+}
+
+function getListLetters() {
+    global $link;
+    $listLetters = [];
+    $sql = "SELECT Count( tasks.id ) AS Count,users.id,users.user_name,users.email FROM tasks ";
+    $sql = $sql . "LEFT JOIN users ON tasks.id_user = users.id WHERE tasks.`status` = 0 ";
+    $sql = $sql . "AND tasks.date_deadline != \"1970-01-01 00:00:00\" AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR ) ";
+    $sql = $sql . "GROUP BY users.id";
+    $res = mysqli_query($link, $sql);
+    $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    foreach ($res as $key => $value) {
+       $letter = getHotTasks($value["id"], $value["user_name"]);
+       array_push($listLetters, $letter);
+    }
+}
+
+getListLetters();
+/*Конец Уведомления о предстоящих задачах [необязательно]*/
+
 $page_content = include_template("index.php", ["taskList" =>$taskList,
     "show_complete_tasks" => $show_complete_tasks]);
 //print($page_content);

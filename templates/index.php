@@ -27,12 +27,6 @@
 
 <table class="tasks">
     <!--  Вставка таблицы -->
-    <!--
-    "task" => $error,//task_name
-    "completion" => "",//date_completion
-    "category" => "",//id_project
-    "completed" => ""//`status`
-    -->
     <?php foreach ($taskList as $key => $val) { ?>
         <?php if($val["status"] == 1) { ?>
             <!-- Завершенное задачи-->

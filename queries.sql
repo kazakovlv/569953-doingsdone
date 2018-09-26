@@ -122,3 +122,44 @@ UPDATE tasks
 SET tasks.task_name = 'Погрузка дивана и стиральной машины' 
 WHERE
 	tasks.id = 4;
+
+/*Уведомления о предстоящих задачах [необязательно]*/
+/*
+1. Выполнить SQL запрос на получение всех невыполненных задач у которых
+дата выполнения больше или равна текущей дате/времени минус один час
+2. Если у одного пользователя задач больше, чем одна, то объединить их названия
+и даты в один список, который будет вставлен в уведомление
+3. Сформировать для каждого найденного пользователя письмо, указав тему и текст сообщения
+4. Отправить каждому найденному пользователю это письмо
+*/
+SELECT
+	tasks.id,
+	tasks.id_project,
+	tasks.date_create,
+	tasks.date_completion,
+	tasks.`status`,
+	tasks.task_name,
+	tasks.file_name,
+	tasks.date_deadline
+FROM
+	tasks
+WHERE
+	tasks.id_user = 1
+	AND tasks.`status` = 0
+	AND tasks.date_deadline != "1970-01-01 00:00:00"
+	AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR );
+/*Список для рассылки*/
+SELECT
+	Count( tasks.id ) AS Count,
+	users.id,
+	users.user_name,
+	users.email
+FROM
+	tasks
+	LEFT JOIN users ON tasks.id_user = users.id
+WHERE
+	tasks.`status` = 0
+	AND tasks.date_deadline != "1970-01-01 00:00:00"
+	AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR )
+GROUP BY
+	users.id;
