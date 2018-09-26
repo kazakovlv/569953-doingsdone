@@ -27,39 +27,49 @@
 
 <table class="tasks">
     <!--  Вставка таблицы -->
+    <!--
+    "task" => $error,//task_name
+    "completion" => "",//date_completion
+    "category" => "",//id_project
+    "completed" => ""//`status`
+    -->
     <?php foreach ($taskList as $key => $val) { ?>
-        <?php if($val['completed'] == 'Да') { ?>
-            <!-- Завершенное задание-->
+        <?php if($val["status"] == 1) { ?>
+            <!-- Завершенное задачи-->
             <?php if ($show_complete_tasks) { ?>
                 <tr class="tasks__item task task--completed">
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" type="checkbox" checked>
-                            <span class="checkbox__text"><?=htmlspecialchars($val["task"]);?></span>
+                            <span class="checkbox__text"><?=htmlspecialchars($val["task_name"]);?></span>
                         </label>
                     </td>
-                    <td class="task__date"><?=htmlspecialchars($val["completion"]);?></td>
-                    <td class="task__controls"></td>
+                    <td class="task__file">
+                        <?php if ($val["file_name"] != "") { ?>
+                            <a class="download-link" href="#"><?=htmlspecialchars($val["file_name"]);?></a>
+                        <?php } ?>
+                    </td>
+                    <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
                 </tr>
             <?php } ?>
         <?php } else { ?>
             <!-- Незавершенные задачи-->
-            <tr class="tasks__item task <?=isImportant($val['completion']);?>">
+            <tr class="tasks__item task <?=isImportant($val["date_deadline"]);?>">
                 <td class="task__select">
                     <label class="checkbox task__checkbox">
-                        <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value=<?=$taskCurrent;?>>
-                        <span class="checkbox__text"><?=htmlspecialchars($val['task']);?></span>
+                        <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value=<?=$val["id"];?>>
+                        <span class="checkbox__text"><?=htmlspecialchars($val['task_name']);?></span>
                     </label>
                 </td>
-                <td class="task__date"><?=htmlspecialchars($val['completion']);?></td>
-                <td class="task__controls"></td>
-                <!--<td class="task__file">
-                    <a class="download-link" href="#">Home.psd</a>
-                </td>-->
+                <td class="task__file">
+                    <?php if ($val["file_name"] != "") { ?>
+                        <a class="download-link" href="#"><?=htmlspecialchars($val["file_name"]);?></a>
+                    <?php } ?>
+                </td>
+                <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
             </tr>
         <?php } ?>
         <?php
-        $taskCurrent ++;
     } ?>
     <!-- Конец вставки -->
 </table>

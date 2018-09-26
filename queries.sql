@@ -111,6 +111,7 @@ WHERE
 /*Получить список из всех задач для одного проекта */
 SELECT
 	tasks.id,
+	tasks.id_project,
 	tasks.date_create,
 	tasks.date_completion,
 	tasks.`status`,
