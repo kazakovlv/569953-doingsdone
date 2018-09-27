@@ -100,7 +100,7 @@ if (!$link) {
 } else {
     $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
     $sql = $sql . "tasks.file_name,tasks.date_deadline ";
-    $sql = $sql . "FROM tasks WHERE tasks.id_user = ? ";
+    $sql = $sql . "FROM tasks WHERE tasks.id_user = ? ORDER BY tasks.date_deadline ASC";
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt,"i", $clientId);
     mysqli_stmt_execute($stmt);
@@ -136,10 +136,10 @@ function showDate($DateTime) {
 /*Уведомления о предстоящих задачах [необязательно]*/
 function getHotTasks($userId, $userName) {
     global $link;
-    $letter = falae;
+    $letter = false;
     $sql = "SELECT tasks.task_name, tasks.date_deadline FROM tasks WHERE ";
     $sql = $sql . "tasks.id_user = ? AND tasks.`status` = 0 AND tasks.date_deadline != \"1970-01-01 00:00:00\" ";
-	$sql = $sql . "AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR )";
+	$sql = $sql . "AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR ) ORDER BY date_deadline";
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt,"i", $userId);
     mysqli_stmt_execute($stmt);
@@ -158,15 +158,14 @@ function getHotTasks($userId, $userName) {
         foreach ($projectListHot as $key => $value) {
             $showDate = date_create($value["date_deadline"]);
             $showDate = date_format($showDate, "d.m.Y H:i:s");
-            $letter = $letter . $showDate . " - " . $value["task_name"] . "\n";
+            $letter .= "У вас запланирована задача \"" . $value["task_name"] . "\" на " . $showDate  . "\n";
         }
     }
     return $letter;
 }
 
-function getListLetters() {
+function sendLetters() {
     global $link;
-    $listLetters = [];
     $sql = "SELECT Count( tasks.id ) AS Count,users.id,users.user_name,users.email FROM tasks ";
     $sql = $sql . "LEFT JOIN users ON tasks.id_user = users.id WHERE tasks.`status` = 0 ";
     $sql = $sql . "AND tasks.date_deadline != \"1970-01-01 00:00:00\" AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR ) ";
@@ -174,13 +173,41 @@ function getListLetters() {
     $res = mysqli_query($link, $sql);
     $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
     foreach ($res as $key => $value) {
-       $letter = getHotTasks($value["id"], $value["user_name"]);
-       array_push($listLetters, $letter);
+        $letter = getHotTasks($value["id"], $value["user_name"]);
+        $headers  = "Content-type: text/html; charset=windows-1251 \r\n";
+        $headers .= "From: От кого письмо <info@doingsdone.com>\r\n";
+        $headers .= "Reply-To: info@doingsdone.com\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+        $subject = "Уведомление от сервиса \"Дела в порядке\".";
+        mail($value["email"], $subject, $letter, $headers);
     }
 }
 
-getListLetters();
+sendLetters();
 /*Конец Уведомления о предстоящих задачах [необязательно]*/
+/*Поиск [необязательно]*/
+function searchTasks($userId, $textSearch) {
+    global $link;
+    $tasks = [];
+    $textSearch = trim($textSearch);
+    if (empty($textSearch)) {
+        return $tasks;
+    }
+    $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
+    $sql = $sql . "tasks.file_name,tasks.date_deadline ";
+    $sql = $sql . "FROM tasks WHERE tasks.id_user = ? AND MATCH ( task_name ) AGAINST ( ? ";
+    $sql = $sql . " IN BOOLEAN MODE) ORDER BY tasks.date_deadline ASC";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt,"is", $userId, $textSearch);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $tasks = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    return $tasks;
+}
+
+//$taskList = searchTasks(1, "оператора");
+//$taskList = searchTasks(1, "   ");
+/* Конец Поиск [необязательно]*/
 
 $page_content = include_template("index.php", ["taskList" =>$taskList,
     "show_complete_tasks" => $show_complete_tasks]);

@@ -115,7 +115,8 @@ FROM
 	tasks 
 WHERE
 	tasks.id_user = 1 
-	AND tasks.date_deadline <=  CURRENT_DATE() + INTERVAL 1 DAY;
+	AND tasks.date_deadline <=  CURRENT_DATE() + INTERVAL 1 DAY
+ORDER BY tasks.date_deadline ASC;
 
 /*обновить название задачи по её идентификатору*/
 UPDATE tasks 
@@ -147,7 +148,8 @@ WHERE
 	tasks.id_user = 1
 	AND tasks.`status` = 0
 	AND tasks.date_deadline != "1970-01-01 00:00:00"
-	AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR );
+	AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR )
+ORDER BY date_deadline;
 /*Список для рассылки*/
 SELECT
 	Count( tasks.id ) AS Count,
@@ -163,3 +165,21 @@ WHERE
 	AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR )
 GROUP BY
 	users.id;
+
+/*Поиск [необязательно]*/
+SELECT
+	tasks.id,
+	tasks.id_project,
+	tasks.date_create,
+	tasks.date_completion,
+	tasks.`status`,
+	tasks.task_name,
+	tasks.file_name,
+	tasks.date_deadline
+FROM
+	tasks
+WHERE
+	tasks.id_user = 1
+	AND MATCH ( task_name ) AGAINST ( 'оператора' IN BOOLEAN MODE)
+ORDER BY
+	tasks.date_deadline ASC;
