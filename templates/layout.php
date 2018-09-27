@@ -43,12 +43,13 @@
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                        <?php while ($projectList_curPage < $projectList_count) { ?>
+                        <?php foreach ($projectList as $key => $val) { ?>
                             <li class="main-navigation__list-item">
-                                <a class="main-navigation__list-item-link" href="#"><?=$projectList[$projectList_curPage]; ?></a>
-                                <span class="main-navigation__list-item-count"><?=summTask($taskList, $projectList[$projectList_curPage]); ?></span>
+                                <a class="main-navigation__list-item-link" href="#"><?=$val["project_name"]; ?></a>
+                                <span class="main-navigation__list-item-count">
+                                    <?=summTask($taskList, $val["id"]); ?>
+                                </span>
                             </li>
-                            <?php $projectList_curPage ++; ?>
                         <?php } ?>
                     </ul>
                 </nav>
