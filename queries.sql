@@ -183,3 +183,26 @@ WHERE
 	AND MATCH ( task_name ) AGAINST ( 'оператора' IN BOOLEAN MODE)
 ORDER BY
 	tasks.date_deadline ASC;
+
+/*Запрос проектов с подсчетом задач, входящих в него*/
+SELECT
+	projects.id,
+	projects.project_name,
+	Count( tasks.id ) AS task_count
+FROM
+	projects
+	LEFT JOIN tasks ON tasks.id_project = projects.id
+WHERE
+	projects.id_user = 1
+GROUP BY
+	projects.id
+ORDER BY 2;
+
+/*Проверка есть ли такой projects.id у такого пользователя с id_user*/
+SELECT
+	projects.id
+FROM
+	projects
+WHERE
+	projects.id_user = 1
+	AND projects.id = 1;

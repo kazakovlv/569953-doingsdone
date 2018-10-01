@@ -123,4 +123,15 @@ function searchTasks($userId, $textSearch) {
     return $tasks;
 }
 
+function is_fake($userId, $projectId) {
+    global $link;
+    $answer = false;
+    $sql = "SELECT projects.id FROM projects WHERE projects.id_user = " . $userId . " AND projects.id = " . $projectId;
+    $res = mysqli_query($link, $sql);
+    $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+    if (count($res) == 0){
+        $answer = true;
+    }
+    return $answer;
+}
 ?>
