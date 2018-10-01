@@ -206,3 +206,7 @@ FROM
 WHERE
 	projects.id_user = 1
 	AND projects.id = 1;
+
+INSERT INTO tasks ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline )
+VALUES
+	( 1, 1, NOW( ), '1970-01-01', 0, 'Техническое задание на забор', '', '2018-10-01' );

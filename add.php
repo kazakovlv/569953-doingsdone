@@ -58,6 +58,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fileName = "uploads/". uniqid() . "." . pathinfo($_FILES["taskFile"]["name"]["fileName"],PATHINFO_EXTENSION);
     $sourceFile = $_FILES["taskFile"]["tmp_name"]["fileName"];
     move_uploaded_file($sourceFile, $fileName);
+
+    $sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
+    $sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt,"iisss",$clientId, $taskItem["project"], $taskItem["name"], $fileName, $taskItem["date"]);
+    $res = mysqli_stmt_execute($stmt);
+    if ($res) {
+        $task_id = mysqli_insert_id($link);
+        header("Location: index.php/?project_id=" . $taskItem["project"]);
+    }
+
 }
 $page_content = include_template("add.php", ["projectList" =>$projectList, "taskItem" => $taskItem]);
 //print($page_content);
