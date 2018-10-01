@@ -1,21 +1,14 @@
 <?php
-//header("Location: /pages/guest.html");
-//header("HTTP/1.1 404 Not Found");
-
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'ru_RU');
 $clientId = 1;
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
-// показывать или нет выполненные задачи
-$show_complete_tasks = rand(0, 1);
 $projectList = [];
 $taskList = [];
 // Определение фильтра задач по проектам
 $projectFilter = "";
-$projectFilterError = false;
-// Подключение к базе данных
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
 
 mysqli_set_charset($link, "utf8");
@@ -30,13 +23,11 @@ if (!$link) {
         ]
     ];
 } else {
-// Определение фильтра задач по проектам
+    // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
         if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) oR is_fake($clientId, $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
-            $projectFilterError = true;
-            //print("Not Found");
-            //die();
+            die("HTTP/1.1 404 Not Found");
         }
         $projectFilter = " AND id_project = " . $_GET['project_id'];
     }
@@ -60,16 +51,15 @@ if (!$link) {
     $projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
 }
 
-// Конец подключения к БД
+$taskItem = [];
 
-//sendLetters();
-if ($projectFilterError) {
-    $page_content = "<h2>Not Found!</h2>";
-} else {
-    $page_content = include_template("index.php", ["taskList" =>$taskList,
-        "show_complete_tasks" => $show_complete_tasks]);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $taskItem = $_POST["taskItem"];
+    $fileName = "uploads/". uniqid() . "." . pathinfo($_FILES["taskFile"]["name"]["fileName"],PATHINFO_EXTENSION);
+    $sourceFile = $_FILES["taskFile"]["tmp_name"]["fileName"];
+    move_uploaded_file($sourceFile, $fileName);
 }
-
+$page_content = include_template("add.php", ["projectList" =>$projectList, "taskItem" => $taskItem]);
 //print($page_content);
 
 $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
