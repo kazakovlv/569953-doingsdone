@@ -54,24 +54,54 @@ if (!$link) {
 $taskItem = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //Вылидация формы
     $taskItem = $_POST["taskItem"];
-    $fileName = "uploads/". uniqid() . "." . pathinfo($_FILES["taskFile"]["name"]["fileName"],PATHINFO_EXTENSION);
-    $sourceFile = $_FILES["taskFile"]["tmp_name"]["fileName"];
-    move_uploaded_file($sourceFile, $fileName);
-
-    $sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
-    $sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
-    $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"iisss",$clientId, $taskItem["project"], $taskItem["name"], $fileName, $taskItem["date"]);
-    $res = mysqli_stmt_execute($stmt);
-    if ($res) {
-        $task_id = mysqli_insert_id($link);
-        header("Location: index.php/?project_id=" . $taskItem["project"]);
+    $required = ["project", "name", "date"];
+    $dict = ["project" => "Проект задачи", "name" => "Название задачи", "date" => "Срок выполнения"];
+    $errors = [];
+    foreach ($required as $key) {
+        if (empty($taskItem[$key])) {
+            $errors[$key] = 'Это поле надо заполнить';
+        }
+    }
+    if (is_fake($clientId, $taskItem["project"])) {
+        $errors["project"] = "Ошибка выбора проекта";
+    }
+    if (!is_valid_date($taskItem["date"])) {
+        $errors["date"] = "Ошибка даты";
     }
 
-}
-$page_content = include_template("add.php", ["projectList" =>$projectList, "taskItem" => $taskItem]);
+    $fileName = "";
+    $filePath = "";
+    $sourceFile = "";
+
+    if (count($errors)) {
+        $page_content = include_template("add.php", ["projectList" => $projectList, "taskItem" => $taskItem,
+            "errors" => $errors]);
+    } else {
+        if (isset($_FILES["taskFile"]["tmp_name"]) & $_FILES["taskFile"]["error"] == 0) {
+            $fileName = uniqid() . "." . pathinfo($_FILES["taskFile"]["name"],PATHINFO_EXTENSION);
+            $filePath = "uploads/". uniqid() . "." . pathinfo($_FILES["taskFile"]["name"],PATHINFO_EXTENSION);
+            $sourceFile = $_FILES["taskFile"]["tmp_name"];
+            move_uploaded_file($sourceFile, $filePath);
+        }
+        //Конец валидации
+
+        $sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
+        $sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
+        $stmt = mysqli_prepare($link, $sql);
+        mysqli_stmt_bind_param($stmt,"iisss",$clientId, $taskItem["project"], $taskItem["name"], $fileName, $taskItem["date"]);
+        $res = mysqli_stmt_execute($stmt);
+        if ($res) {
+            $task_id = mysqli_insert_id($link);
+            header("Location: /?project_id=" . $taskItem["project"]);
+        }
+
+    }
+} else {
+    $page_content = include_template("add.php", ["projectList" =>$projectList, "taskItem" => $taskItem]);
 //print($page_content);
+}
 
 $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
     "taskList" => $taskList, "page_content" => $page_content]);

@@ -170,4 +170,9 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
     return $stmt;
 }
 
+function is_valid_date($date) {
+    return preg_match("/^(\\d{2})\\.(\\d{2})\\.(\\d{4})$/", $date, $m)
+        && checkdate($m[2], $m[1], $m[3]);
+}
+
 ?>
