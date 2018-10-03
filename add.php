@@ -9,6 +9,7 @@ $projectList = [];
 //$taskList = [];
 // Определение фильтра задач по проектам
 $projectFilter = "";
+$active_project = null;
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
 
 if (!$link) {
@@ -82,6 +83,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-    "page_content" => $page_content]);
+    "page_content" => $page_content, "active_project" => $active_project]);
 print($layout_content);
 ?>

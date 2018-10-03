@@ -14,6 +14,7 @@ $projectFilter = "";
 $projectFilterError = false;
 // Подключение к базе данных
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
+$active_project = null;
 
 if (!$link) {
     $error = mysqli_connect_error();
@@ -22,13 +23,14 @@ if (!$link) {
     mysqli_set_charset($link, "utf8");
     // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
-        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) oR is_fake($clientId, $_GET['project_id'])) {
+        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($clientId, $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
             $projectFilterError = true;
             //print("Not Found");
             //die();
         }
         $projectFilter = " AND id_project = " . $_GET['project_id'];
+        $active_project = $_GET['project_id'];
     }
 
     $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
@@ -63,6 +65,6 @@ if ($projectFilterError) {
 //print($page_content);
 
 $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-    "taskList" => $taskList, "page_content" => $page_content]);
+    "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
 print($layout_content);
 ?>

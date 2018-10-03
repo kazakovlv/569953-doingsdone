@@ -7,6 +7,7 @@ require_once("functions.php");
 $title = "Дела в порядке";
 $projectList = [];
 $projectItem = null;
+$active_project = null;
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
 
 if (!$link) {
@@ -43,7 +44,7 @@ if (!$link) {
     $projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
 }
 $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-    "page_content" => $page_content]);
+    "page_content" => $page_content, "active_project" => $active_project]);
 print($layout_content);
 ?>
 
