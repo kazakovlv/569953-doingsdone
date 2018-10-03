@@ -25,7 +25,7 @@ if (!$link) {
 } else {
     // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
-        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) oR is_fake($clientId, $_GET['project_id'])) {
+        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($clientId, $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
             die("HTTP/1.1 404 Not Found");
         }
@@ -59,18 +59,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $required = ["project", "name", "date"];
     $dict = ["project" => "Проект задачи", "name" => "Название задачи", "date" => "Срок выполнения"];
     $errors = [];
+    if (!is_valid_date($taskItem["date"])) {
+        $errors["date"] = "Ошибка даты";
+    }
+
     foreach ($required as $key) {
         if (empty($taskItem[$key])) {
             $errors[$key] = 'Это поле надо заполнить';
         }
     }
+
     if (is_fake($clientId, $taskItem["project"])) {
         $errors["project"] = "Ошибка выбора проекта";
     }
-    if (!is_valid_date($taskItem["date"])) {
-        $errors["date"] = "Ошибка даты";
-    }
-
+    //Конец валидации
     $fileName = "";
     $filePath = "";
     $sourceFile = "";
@@ -85,7 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sourceFile = $_FILES["taskFile"]["tmp_name"];
             move_uploaded_file($sourceFile, $filePath);
         }
-        //Конец валидации
 
         $sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
         $sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
@@ -94,7 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $res = mysqli_stmt_execute($stmt);
         if ($res) {
             $task_id = mysqli_insert_id($link);
-            header("Location: /?project_id=" . $taskItem["project"]);
+            //header("Location: /?project_id=" . $taskItem["project"]);
+            header("Location: /");
         }
 
     }

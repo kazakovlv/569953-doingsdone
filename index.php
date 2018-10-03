@@ -43,7 +43,7 @@ if (!$link) {
 
     $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
     $sql = $sql . "tasks.file_name,tasks.date_deadline ";
-    $sql = $sql . "FROM tasks WHERE tasks.id_user = ?" . $projectFilter . " ORDER BY tasks.date_deadline ASC";
+    $sql = $sql . "FROM tasks WHERE tasks.id_user = ?" . $projectFilter . " ORDER BY tasks.date_create DESC";
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt,"i", $clientId);
     mysqli_stmt_execute($stmt);
