@@ -55,7 +55,7 @@
                 </nav>
 
                 <a class="button button--transparent button--plus content__side-button"
-                   href="pages/form-project.html" target="project_add">Добавить проект</a>
+                   href="addproject.php" target="project_add">Добавить проект</a>
             </section>
 <!-- Вырезано содержимое тега main-->
             <main class="content__main"><?= $page_content; ?></main>

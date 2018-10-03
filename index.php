@@ -1,7 +1,4 @@
 <?php
-//header("Location: /pages/guest.html");
-//header("HTTP/1.1 404 Not Found");
-
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'ru_RU');
 $clientId = 1;
@@ -18,19 +15,12 @@ $projectFilterError = false;
 // Подключение к базе данных
 $link = mysqli_connect("localhost", "root", "", "doingsdone");
 
-mysqli_set_charset($link, "utf8");
 if (!$link) {
     $error = mysqli_connect_error();
-    $taskList = [
-        0 => [
-            "task" => $error,//task_name
-            "completion" => "",//date_deadline
-            "category" => "",//id_project
-            "completed" => ""//`status`
-        ]
-    ];
+    die($error);
 } else {
-// Определение фильтра задач по проектам
+    mysqli_set_charset($link, "utf8");
+    // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
         if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) oR is_fake($clientId, $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
