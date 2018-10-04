@@ -16,7 +16,7 @@
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="/">
+            <a href="index.php">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
 
@@ -49,7 +49,7 @@
                             <?php } else { ?>
                                 <li class="main-navigation__list-item">
                             <?php }?>
-                                <a class="main-navigation__list-item-link" href="/?project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
+                                <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
                                 <span class="main-navigation__list-item-count">
                                     <?=$val["task_count"]; ?>
                                 </span>

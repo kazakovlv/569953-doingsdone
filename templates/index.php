@@ -8,10 +8,63 @@
 
 <div class="tasks-controls">
     <nav class="tasks-switch">
-        <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-        <a href="/" class="tasks-switch__item">Повестка дня</a>
-        <a href="/" class="tasks-switch__item">Завтра</a>
-        <a href="/" class="tasks-switch__item">Просроченные</a>
+        <?php if (isset($active_project)) {?>
+             <?php if (isset($filter_task)) {?>
+                <?php if ($filter_task == "all") {?>
+                    <a href="index.php?task_filter=all&project_id=<?=$active_project?>" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+                <?php } else {?>
+                     <a href="index.php?task_filter=all&project_id=<?=$active_project?>" class="tasks-switch__item">Все задачи</a>
+                <?php }?>
+                <?php if ($filter_task == "today") {?>
+                    <a href="index.php?task_filter=today&project_id=<?=$active_project?>" class="tasks-switch__item tasks-switch__item--active">Повестка дня</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=today&project_id=<?=$active_project?>" class="tasks-switch__item">Повестка дня</a>
+                <?php }?>
+                <?php if ($filter_task == "tomorrow") {?>
+                     <a href="index.php?task_filter=tomorrow&project_id=<?=$active_project?>" class="tasks-switch__item tasks-switch__item--active">Завтра</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=tomorrow&project_id=<?=$active_project?>" class="tasks-switch__item">Завтра</a>
+                <?php }?>
+                <?php if ($filter_task == "overdue") {?>
+                    <a href="index.php?task_filter=overdue&project_id=<?=$active_project?>" class="tasks-switch__item tasks-switch__item--active">Просроченные</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=overdue&project_id=<?=$active_project?>" class="tasks-switch__item">Просроченные</a>
+                <?php }?>
+            <?php } else {?>
+                <a href="index.php?task_filter=all&project_id=<?=$active_project?>" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+                <a href="index.php?task_filter=today&project_id=<?=$active_project?>" class="tasks-switch__item">Повестка дня</a>
+                <a href="index.php?task_filter=tomorrow&project_id=<?=$active_project?>" class="tasks-switch__item">Завтра</a>
+                <a href="index.php?task_filter=overdue&project_id=<?=$active_project?>" class="tasks-switch__item">Просроченные</a>
+            <?php }?>
+        <?php } else {?>
+            <?php if (isset($filter_task)) {?>
+                <?php if ($filter_task == "all") {?>
+                    <a href="index.php?task_filter=all" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=all" class="tasks-switch__item">Все задачи</a>
+                <?php }?>
+                <?php if ($filter_task == "today") {?>
+                    <a href="index.php?task_filter=today" class="tasks-switch__item tasks-switch__item--active">Повестка дня</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=today" class="tasks-switch__item">Повестка дня</a>
+                <?php }?>
+                <?php if ($filter_task == "tomorrow") {?>
+                    <a href="index.php?task_filter=tomorrow" class="tasks-switch__item tasks-switch__item--active">Завтра</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=tomorrow" class="tasks-switch__item">Завтра</a>
+                <?php }?>
+                <?php if ($filter_task == "overdue") {?>
+                    <a href="index.php?task_filter=overdue" class="tasks-switch__item tasks-switch__item--active">Просроченные</a>
+                <?php } else {?>
+                    <a href="index.php?task_filter=overdue" class="tasks-switch__item">Просроченные</a>
+                <?php }?>
+            <?php } else {?>
+                <a href="index.php?task_filter=all" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
+                <a href="index.php?task_filter=today" class="tasks-switch__item">Повестка дня</a>
+                <a href="index.php?task_filter=tomorrow" class="tasks-switch__item">Завтра</a>
+                <a href="index.php?task_filter=overdue" class="tasks-switch__item">Просроченные</a>
+            <?php }?>
+        <?php }?>
     </nav>
 
     <label class="checkbox">

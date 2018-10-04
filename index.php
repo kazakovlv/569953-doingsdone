@@ -58,8 +58,15 @@ if (!$link) {
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {
-    $page_content = include_template("index.php", ["taskList" =>$taskList,
-        "show_complete_tasks" => $show_complete_tasks]);
+    if (isset($_GET["task_filter"])){
+        $filter_task = $_GET["task_filter"];
+        $page_content = include_template("index.php", ["taskList" => $taskList,
+            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+            "filter_task" =>$filter_task]);
+    } else {
+        $page_content = include_template("index.php", ["taskList" => $taskList,
+            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+    }
 }
 
 //print($page_content);
