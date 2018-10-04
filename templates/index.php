@@ -40,7 +40,7 @@
                     </td>
                     <td class="task__file">
                         <?php if ($val["file_name"] != "") { ?>
-                            <a class="download-link" href="#"><?=htmlspecialchars($val["file_name"]);?></a>
+                            <a class="download-link" href="uploads/<?=$val["file_name"]?>" download><?=htmlspecialchars($val["file_name"]);?></a>
                         <?php } ?>
                     </td>
                     <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
@@ -57,7 +57,7 @@
                 </td>
                 <td class="task__file">
                     <?php if ($val["file_name"] != "") { ?>
-                        <a class="download-link" href="#"><?=htmlspecialchars($val["file_name"]);?></a>
+                        <a class="download-link" href="uploads/<?=$val["file_name"]?>" download><?=htmlspecialchars($val["file_name"]);?></a>
                     <?php } ?>
                 </td>
                 <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
