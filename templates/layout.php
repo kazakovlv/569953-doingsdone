@@ -49,10 +49,16 @@
                             <?php } else { ?>
                                 <li class="main-navigation__list-item">
                             <?php }?>
+
+                            <?php if (isset($filter_task)) {?>
+                                <a class="main-navigation__list-item-link" href="index.php?task_filter=<?=$filter_task?>&project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
+                            <?php } else { ?>
                                 <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
-                                <span class="main-navigation__list-item-count">
-                                    <?=$val["task_count"]; ?>
-                                </span>
+                            <?php }?>
+
+                            <span class="main-navigation__list-item-count">
+                                <?=$val["task_count"]; ?>
+                            </span>
                             </li>
                         <?php } ?>
                     </ul>

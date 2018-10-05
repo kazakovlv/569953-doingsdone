@@ -70,8 +70,12 @@ if ($projectFilterError) {
 }
 
 //print($page_content);
-
-$layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-    "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
+if (isset($_GET["task_filter"])) {
+    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project, "filter_task" =>$filter_task]);
+} else {
+    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
+}
 print($layout_content);
 ?>
