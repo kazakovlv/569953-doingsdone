@@ -1,7 +1,6 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'ru_RU');
-$clientId = 1;
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
@@ -38,7 +37,7 @@ if (!$link) {
                 $stmt = mysqli_prepare($link, $sql);
                 mysqli_stmt_bind_param($stmt,"sss",$form["email"],$form["name"], $password);
                 $res = mysqli_stmt_execute($stmt);
-                
+
                 if ($res && empty($errors)) {
                     header("Location: /enter.php");
                     exit();
