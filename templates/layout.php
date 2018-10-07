@@ -68,7 +68,7 @@
                 </nav>
 
                 <a class="button button--transparent button--plus content__side-button"
-                   href="addproject.php" target="project_add">Добавить проект</a>
+                   href="/addproject.php">Добавить проект</a>
             </section>
             <?php }?>
             <!-- Вырезано содержимое тега main-->
