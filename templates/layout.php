@@ -19,25 +19,28 @@
             <a href="index.php">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
-
             <div class="main-header__side">
-                <a class="main-header__side-item button button--plus open-modal" href="add.php">Добавить задачу</a>
+                <?php if (isset($user)) {?>
+                    <a class="main-header__side-item button button--plus open-modal" href="add.php">Добавить задачу</a>
+                    <div class="main-header__side-item user-menu">
+                        <div class="user-menu__image">
+                            <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
+                        </div>
 
-                <div class="main-header__side-item user-menu">
-                    <div class="user-menu__image">
-                        <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
+                        <div class="user-menu__data">
+                            <p>Константин</p>
+
+                            <a href="#">Выйти</a>
+                        </div>
                     </div>
-
-                    <div class="user-menu__data">
-                        <p>Константин</p>
-
-                        <a href="#">Выйти</a>
-                    </div>
-                </div>
+                <?php } else {?>
+                    <a class="main-header__side-item button button--transparent" href="/auth.php">Войти</a>
+                <?php }?>
             </div>
         </header>
 
         <div class="content">
+            <?php if (isset($user)) {?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
@@ -67,7 +70,8 @@
                 <a class="button button--transparent button--plus content__side-button"
                    href="addproject.php" target="project_add">Добавить проект</a>
             </section>
-<!-- Вырезано содержимое тега main-->
+            <?php }?>
+            <!-- Вырезано содержимое тега main-->
             <main class="content__main"><?= $page_content; ?></main>
         </div>
     </div>
@@ -80,9 +84,9 @@
 
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
-
-        <a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>
-
+        <?php if (isset($user)) {?>
+            <a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>
+        <?php }?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
             <a class="social__link social__link--facebook" href="#">

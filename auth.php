@@ -48,10 +48,10 @@ if (!$link) {
 }
 
 if (empty($errors)) {
-    $page_content = include_template("enter.php", ["form" => $form]);
+    $page_content = include_template("auth.php", ["form" => $form]);
 } else {
-    $page_content = include_template("enter.php", ["errors" => $errors, "form" => $form]);
+    $page_content = include_template("auth.php", ["errors" => $errors, "form" => $form]);
 }
-$layout_content = include_template("layoutregistration.php",  ["title" => $title, "page_content" => $page_content]);
+$layout_content = include_template("layout_auth.php",  ["title" => $title, "page_content" => $page_content]);
 print($layout_content);
 ?>

@@ -52,7 +52,7 @@ if (empty($errors)) {
     $page_content = include_template("adduser.php", ["errors" => $errors, "form" => $form]);
 }
 
-$layout_content = include_template("layoutregistration.php",  ["title" => $title, "page_content" => $page_content]);
+$layout_content = include_template("layout_auth.php",  ["title" => $title, "page_content" => $page_content]);
 
 print($layout_content);
 ?>

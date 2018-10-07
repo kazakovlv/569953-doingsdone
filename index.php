@@ -1,10 +1,19 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'ru_RU');
-$clientId = 1;
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
+
+if (!isset($_SESSION["user"])) {
+    $page_content = include_template("guest.php", []);
+    $layout_content = include_template("layout.php",  ["title" => $title, "page_content" => $page_content]);
+    print($layout_content);
+    exit();
+}
+$userData = $_SESSION["user"];
+$clientId = 1;
+
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 $projectList = [];
