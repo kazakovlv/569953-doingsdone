@@ -1,10 +1,19 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
 setlocale(LC_ALL, 'ru_RU');
-$clientId = 1;
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
+
+if (!isset($_SESSION["user"])) {
+    $page_content = include_template("guest.php", []);
+    $layout_content = include_template("layout.php",  ["title" => $title, "page_content" => $page_content]);
+    print($layout_content);
+    exit();
+}
+$userData = $_SESSION["user"];
+$clientId = 1;
+
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 $projectList = [];
@@ -58,13 +67,24 @@ if (!$link) {
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {
-    $page_content = include_template("index.php", ["taskList" =>$taskList,
-        "show_complete_tasks" => $show_complete_tasks]);
+    if (isset($_GET["task_filter"])){
+        $filter_task = $_GET["task_filter"];
+        $page_content = include_template("index.php", ["taskList" => $taskList,
+            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+            "filter_task" =>$filter_task]);
+    } else {
+        $page_content = include_template("index.php", ["taskList" => $taskList,
+            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+    }
 }
 
 //print($page_content);
-
-$layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-    "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
+if (isset($_GET["task_filter"])) {
+    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project, "filter_task" =>$filter_task]);
+} else {
+    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
+}
 print($layout_content);
 ?>

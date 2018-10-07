@@ -3,11 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- Вставлена переменная title для заголовка сайта-->
     <title><?= $title; ?></title>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/flatpickr.min.css">
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -16,62 +14,22 @@
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="index.php">
-                <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
+            <a href="/index.php">
+                <img src="../img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
             </a>
+
             <div class="main-header__side">
-                <?php if (isset($user)) {?>
-                    <a class="main-header__side-item button button--plus open-modal" href="add.php">Добавить задачу</a>
-                    <div class="main-header__side-item user-menu">
-                        <div class="user-menu__image">
-                            <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
-                        </div>
-
-                        <div class="user-menu__data">
-                            <p>Константин</p>
-
-                            <a href="#">Выйти</a>
-                        </div>
-                    </div>
-                <?php } else {?>
-                    <a class="main-header__side-item button button--transparent" href="/auth.php">Войти</a>
-                <?php }?>
+                <a class="main-header__side-item button button--transparent" href="/auth.php">Войти</a>
             </div>
         </header>
 
         <div class="content">
-            <?php if (isset($user)) {?>
             <section class="content__side">
-                <h2 class="content__side-heading">Проекты</h2>
+                <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
 
-                <nav class="main-navigation">
-                    <ul class="main-navigation__list">
-                        <?php foreach ($projectList as $key => $val) { ?>
-                            <?php if ($active_project == $val["id"]) { ?>
-                                <li class="main-navigation__list-item main-navigation__list-item--active">
-                            <?php } else { ?>
-                                <li class="main-navigation__list-item">
-                            <?php }?>
-
-                            <?php if (isset($filter_task)) {?>
-                                <a class="main-navigation__list-item-link" href="index.php?task_filter=<?=$filter_task?>&project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
-                            <?php } else { ?>
-                                <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$val["id"]; ?>"><?=htmlspecialchars($val["project_name"]); ?></a>
-                            <?php }?>
-
-                            <span class="main-navigation__list-item-count">
-                                <?=$val["task_count"]; ?>
-                            </span>
-                            </li>
-                        <?php } ?>
-                    </ul>
-                </nav>
-
-                <a class="button button--transparent button--plus content__side-button"
-                   href="addproject.php" target="project_add">Добавить проект</a>
+                <a class="button button--transparent content__side-button" href="/auth.php">Войти</a>
             </section>
-            <?php }?>
-            <!-- Вырезано содержимое тега main-->
+
             <main class="content__main"><?= $page_content; ?></main>
         </div>
     </div>
@@ -84,9 +42,7 @@
 
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
-        <?php if (isset($user)) {?>
-            <a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>
-        <?php }?>
+
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>
             <a class="social__link social__link--facebook" href="#">
@@ -130,13 +86,10 @@
             <span class="visually-hidden">Разработано:</span>
 
             <a href="https://htmlacademy.ru/intensive/php">
-                <img src="img/htmlacademy.svg" alt="HTML Academy" width="118" height="40">
+                <img src="../img/htmlacademy.svg" alt="HTML Academy" width="118" height="40">
             </a>
         </div>
     </div>
 </footer>
-
-<script src="flatpickr.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
