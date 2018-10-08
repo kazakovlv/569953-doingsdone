@@ -4,6 +4,7 @@ setlocale(LC_ALL, 'ru_RU');
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
+session_start();
 
 if (!isset($_SESSION["user"])) {
     $page_content = include_template("guest.php", []);
@@ -12,7 +13,6 @@ if (!isset($_SESSION["user"])) {
     exit();
 }
 $userData = $_SESSION["user"];
-$clientId = 1;
 
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
@@ -32,7 +32,7 @@ if (!$link) {
     mysqli_set_charset($link, "utf8");
     // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
-        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($clientId, $_GET['project_id'])) {
+        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($userData["id"], $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
             $projectFilterError = true;
             //print("Not Found");
@@ -46,7 +46,7 @@ if (!$link) {
     $sql = $sql . "tasks.file_name,tasks.date_deadline ";
     $sql = $sql . "FROM tasks WHERE tasks.id_user = ?" . $projectFilter . " ORDER BY tasks.date_create DESC";
     $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"i", $clientId);
+    mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     $taskList = mysqli_fetch_all($res,MYSQLI_ASSOC);
@@ -55,7 +55,7 @@ if (!$link) {
     $sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
     $sql = $sql . "WHERE projects.id_user = ? GROUP BY projects.id ORDER BY 2";
     $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"i", $clientId);
+    mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     $projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
@@ -81,10 +81,12 @@ if ($projectFilterError) {
 //print($page_content);
 if (isset($_GET["task_filter"])) {
     $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project, "filter_task" =>$filter_task]);
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project,
+        "filter_task" =>$filter_task, "userData" => $userData]);
 } else {
     $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
-        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project]);
+        "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project,
+        "userData" => $userData]);
 }
 print($layout_content);
 ?>
