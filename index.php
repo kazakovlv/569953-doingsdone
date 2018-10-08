@@ -4,9 +4,31 @@ setlocale(LC_ALL, 'ru_RU');
 $dateFormat = "d.m.Y";
 require_once("functions.php");
 $title = "Дела в порядке";
+$filter_task = [];
 session_start();
 
 if (!isset($_SESSION["user"])) {
+    $is_get = 0;
+    if (isset($_GET['task_filter'])) {
+        $cookie_name = "task_filter";
+        $cookie_value = $_GET['task_filter'];
+        $cookie_expire = strtotime("+1 days");
+        $cookie_path = "/";
+        setcookie($cookie_name, $cookie_value, $cookie_expire, $cookie_path);
+        $is_get++;
+    }
+    if (isset($_GET['project_id'])) {
+        $cookie_name = "project_id";
+        $cookie_value = $_GET['project_id'];
+        $cookie_expire = strtotime("+1 days");
+        $cookie_path = "/";
+        setcookie($cookie_name, $cookie_value, $cookie_expire, $cookie_path);
+        $is_get++;
+    }
+    if ($is_get > 0) {
+        header("Location: /auth.php");
+        exit();
+    }
     $page_content = include_template("guest.php", []);
     $layout_content = include_template("layout.php",  ["title" => $title, "page_content" => $page_content]);
     print($layout_content);
@@ -32,6 +54,7 @@ if (!$link) {
     mysqli_set_charset($link, "utf8");
     // Определение фильтра задач по проектам
     if (isset($_GET['project_id'])) {
+
         if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($userData["id"], $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
             $projectFilterError = true;
@@ -40,12 +63,13 @@ if (!$link) {
         }
         $projectFilter = " AND id_project = " . $_GET['project_id'];
         if (isset($_GET['task_filter'])) {
+
             switch ($_GET['task_filter']) {
                 case "today":
                     $projectFilter .= " AND tasks.date_deadline = CURDATE()";
                     break;
                 case "tomorrow":
-                    $projectFilter .= " AND tasks.date_deadline = DATE_ADD(CURDATE(),Interval 1 DAY)";
+                    $projectFilter .= " AND tasks.date_deadline = DATE_ADD( CURDATE(),Interval 1 DAY)";
                     break;
                 case "overdue":
                     $projectFilter .= " AND tasks.date_deadline <= DATE_ADD( CURDATE( ), INTERVAL - 1 DAY ) AND tasks.`status` = 0";
@@ -56,6 +80,12 @@ if (!$link) {
         $active_project = $_GET['project_id'];
     }
 
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        //Вылидация формы
+        $search_text = $_POST["search_text"];
+        $search_text = htmlspecialchars($search_text);
+        $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
+    }
     $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
     $sql = $sql . "tasks.file_name,tasks.date_deadline ";
     $sql = $sql . "FROM tasks WHERE tasks.id_user = ?" . $projectFilter . " ORDER BY tasks.date_create DESC";
@@ -77,7 +107,6 @@ if (!$link) {
 
 // Конец подключения к БД
 
-//sendLetters();
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {

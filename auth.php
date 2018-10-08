@@ -36,7 +36,20 @@ if (!$link) {
             if (!count($errors)) {
                 if (password_verify($form["password"], $user["password"])) {
                     $_SESSION["user"] = $user;
-                    header("Location: /index.php");
+                    $headerStr = "Location: /index.php";
+                    $getParam = [];
+                    if (isset($_COOKIE['project_id'])) {
+                        $getParam["project_id"] = $_COOKIE['project_id'];
+                        setcookie("project_id", null, -1, "/");
+                    }
+                    if (isset($_COOKIE['task_filter'])) {
+                        $getParam["task_filter"] = $_COOKIE['task_filter'];
+                        setcookie("project_id", null, -1, "/");
+                    }
+                    if (!empty($getParam)) {
+                        $headerStr .= "?" . http_build_query($getParam);
+                    }
+                    header($headerStr);
                     exit();
                 }
                 else {
