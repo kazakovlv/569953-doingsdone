@@ -39,6 +39,20 @@ if (!$link) {
             //die();
         }
         $projectFilter = " AND id_project = " . $_GET['project_id'];
+        if (isset($_GET['task_filter'])) {
+            switch ($_GET['task_filter']) {
+                case "today":
+                    $projectFilter .= " AND tasks.date_deadline = CURDATE()";
+                    break;
+                case "tomorrow":
+                    $projectFilter .= " AND tasks.date_deadline = DATE_ADD(CURDATE(),Interval 1 DAY)";
+                    break;
+                case "overdue":
+                    $projectFilter .= " AND tasks.date_deadline <= DATE_ADD( CURDATE( ), INTERVAL - 1 DAY ) AND tasks.`status` = 0";
+                    break;
+            }
+        }
+
         $active_project = $_GET['project_id'];
     }
 
