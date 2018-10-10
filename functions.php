@@ -203,4 +203,20 @@ function switch_task_status($link, $task_id) {
     return $answer;
 }
 
+function get_task_filter($task_filter) {
+    $dateFilter = "";
+    switch ($task_filter) {
+        case "today":
+            $dateFilter .= " AND tasks.date_deadline = CURDATE()";
+            break;
+        case "tomorrow":
+            $dateFilter .= " AND tasks.date_deadline = DATE_ADD( CURDATE(),Interval 1 DAY)";
+            break;
+        case "overdue":
+            $dateFilter .= " AND tasks.date_deadline <= DATE_ADD( CURDATE(), INTERVAL - 1 DAY )";
+            break;
+    }
+    return $dateFilter;
+}
+
 ?>
