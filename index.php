@@ -38,6 +38,7 @@ $userData = $_SESSION["user"];
 
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
+$show_complete_tasks = 1;
 $projectList = [];
 $taskList = [];
 // Определение фильтра задач по проектам
@@ -78,6 +79,11 @@ if (!$link) {
         }
 
         $active_project = $_GET['project_id'];
+
+    }
+
+    if (isset($_GET['task_id']) && isset($_GET['check'])) {
+        switch_task_status($link, $_GET['task_id']);
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {

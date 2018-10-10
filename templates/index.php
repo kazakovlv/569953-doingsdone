@@ -87,7 +87,7 @@
                 <tr class="tasks__item task task--completed">
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
-                            <input class="checkbox__input visually-hidden" type="checkbox" checked>
+                            <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value=<?=$val["id"];?> checked>
                             <span class="checkbox__text"><?=htmlspecialchars($val["task_name"]);?></span>
                         </label>
                     </td>
