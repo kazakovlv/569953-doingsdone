@@ -1,6 +1,6 @@
 <h2 class="content__main-heading">Список задач</h2>
 
-<form class="search-form" action="index.php" method="post">
+<form class="search-form" action="index.php" method="get">
     <input class="search-form__input" type="text" name="search_text" value="" placeholder="Поиск по задачам">
 
     <input class="search-form__submit" type="submit" name="" value="Искать">
@@ -80,6 +80,9 @@
 
 <table class="tasks">
     <!--  Вставка таблицы -->
+    <?php if (isset($search_error)) {?>
+        <p style="color: red"><?=$search_error?></p>
+    <?php } else {?>
     <?php foreach ($taskList as $key => $val) { ?>
         <?php if($val["status"] == 1) { ?>
             <!-- Завершенное задачи-->
@@ -96,7 +99,7 @@
                             <a class="download-link" href="uploads/<?=$val["file_name"]?>" download><?=htmlspecialchars($val["file_name"]);?></a>
                         <?php } ?>
                     </td>
-                    <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
+                    <td class="task__date"><?=showDate($dateFormat, $val["date_deadline"]);?></td>
                 </tr>
             <?php } ?>
         <?php } else { ?>
@@ -113,10 +116,10 @@
                         <a class="download-link" href="uploads/<?=$val["file_name"]?>" download><?=htmlspecialchars($val["file_name"]);?></a>
                     <?php } ?>
                 </td>
-                <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
+                <td class="task__date"><?=showDate($dateFormat, $val["date_deadline"]);?></td>
             </tr>
         <?php } ?>
-        <?php
-    } ?>
+        <?php } ?>
+    <?php } ?>
     <!-- Конец вставки -->
 </table>

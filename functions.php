@@ -42,8 +42,7 @@ function isImportant($checking_date) {
     return $marker;
 }
 
-function showDate($DateTime) {
-    global $dateFormat;
+function showDate($dateFormat, $DateTime) {
     if($DateTime == "1970-01-01 00:00:00") {
         $showDate = "";
     } else {
@@ -54,8 +53,7 @@ function showDate($DateTime) {
 }
 
 /*Уведомления о предстоящих задачах [необязательно]*/
-function getHotTasks($userId, $userName) {
-    global $link;
+function getHotTasks($link, $userId, $userName) {
     $letter = false;
     $sql = "SELECT tasks.task_name, tasks.date_deadline FROM tasks WHERE ";
     $sql = $sql . "tasks.id_user = ? AND tasks.`status` = 0 AND tasks.date_deadline != \"1970-01-01 00:00:00\" ";
@@ -84,8 +82,7 @@ function getHotTasks($userId, $userName) {
     return $letter;
 }
 
-function sendLetters() {
-    global $link;
+function sendLetters($link) {
     $sql = "SELECT Count( tasks.id ) AS Count,users.id,users.user_name,users.email FROM tasks ";
     $sql = $sql . "LEFT JOIN users ON tasks.id_user = users.id WHERE tasks.`status` = 0 ";
     $sql = $sql . "AND tasks.date_deadline != \"1970-01-01 00:00:00\" AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR ) ";
@@ -93,7 +90,7 @@ function sendLetters() {
     $res = mysqli_query($link, $sql);
     $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
     foreach ($res as $key => $value) {
-        $letter = getHotTasks($value["id"], $value["user_name"]);
+        $letter = getHotTasks($link, $value["id"], $value["user_name"]);
         $headers  = "Content-type: text/html; charset=windows-1251 \r\n";
         $headers .= "From: От кого письмо <info@doingsdone.com>\r\n";
         $headers .= "Reply-To: info@doingsdone.com\r\n";
@@ -104,8 +101,7 @@ function sendLetters() {
 }
 /*Конец Уведомления о предстоящих задачах [необязательно]*/
 /*Поиск [необязательно]*/
-function searchTasks($userId, $textSearch) {
-    global $link;
+function searchTasks($link, $userId, $textSearch) {
     $tasks = [];
     $textSearch = trim($textSearch);
     if (empty($textSearch)) {
@@ -123,8 +119,7 @@ function searchTasks($userId, $textSearch) {
     return $tasks;
 }
 
-function is_fake($userId, $projectId) {
-    global $link;
+function is_fake($link, $userId, $projectId) {
     $answer = false;
     $sql = "SELECT projects.id FROM projects WHERE projects.id_user = " . $userId . " AND projects.id = " . $projectId;
     $res = mysqli_query($link, $sql);

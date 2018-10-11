@@ -54,19 +54,27 @@ if (!$link) {
     die($error);
 } else {
     mysqli_set_charset($link, "utf8");
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_GET['search_text'])) {
         //Вылидация формы
-        $search_text = $_POST["search_text"];
+        $search_text = $_GET["search_text"];
         $search_text = htmlspecialchars($search_text);
-        setcookie("project_id", null, -1, "/");
-        setcookie("task_filter", null, -1, "/");
-        if (isset($_COOKIE['show_completed'])) {
-            $show_complete_tasks = $_COOKIE['show_completed'];
-            if ($show_complete_tasks == 0) {
-                $projectFilter .= " AND tasks.`status` = 0";
+        $search_text = trim($search_text);
+        if (empty($search_text)) {
+            header("Location: /index.php");
+            exit();
+        } else {
+            setcookie("project_id", null, -1, "/");
+            setcookie("task_filter", null, -1, "/");
+            if (isset($_COOKIE['show_completed'])) {
+                $show_complete_tasks = $_COOKIE['show_completed'];
+                if ($show_complete_tasks == 0) {
+                    $projectFilter .= " AND tasks.`status` = 0";
+                }
             }
+            $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
+            $all_filter_param['search_text'] = 0;
         }
-        $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
+
     }
     if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
         setcookie("project_id", null, -1, "/");
@@ -77,7 +85,7 @@ if (!$link) {
     } else {
         // Определение фильтра задач по проектам
         if (isset($_GET['project_id'])) {
-            if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($userData["id"], $_GET['project_id'])) {
+            if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($link, $userData["id"], $_GET['project_id'])) {
                 header("HTTP/1.1 404 Not Found");
                 $projectFilterError = true;
             }
@@ -160,14 +168,36 @@ if (!$link) {
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {
-    if (isset($all_filter_param["task_filter"])){
-        $filter_task = $all_filter_param["task_filter"];
-        $page_content = include_template("index.php", ["taskList" => $taskList,
-            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
-            "filter_task" => $filter_task]);
-    } else {
-        $page_content = include_template("index.php", ["taskList" => $taskList,
-            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+    $index_flag = 0;
+    if (isset($all_filter_param["task_filter"])) {
+        $index_flag += 1;
+    }
+    if (isset($all_filter_param["search_text"])) {
+        $index_flag += 2;
+    }
+    switch ($index_flag){
+        case 1:
+            $filter_task = $all_filter_param["task_filter"];
+            $page_content = include_template("index.php", ["taskList" => $taskList,
+                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                "filter_task" => $filter_task, "dateFormat" => $dateFormat]);
+            break;
+        case 2:
+            if (empty($taskList)) {
+                $search_error = "Ничего не найдено по вашему запросу";
+                $page_content = include_template("index.php", ["search_error" => $search_error,
+                    "show_complete_tasks" => $show_complete_tasks]);
+            } else {
+                $page_content = include_template("index.php", ["taskList" => $taskList,
+                    "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                    "dateFormat" => $dateFormat]);
+            }
+            break;
+        default:
+            $page_content = include_template("index.php", ["taskList" => $taskList,
+                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                "dateFormat" => $dateFormat]);
+            break;
     }
 }
 
