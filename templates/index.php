@@ -80,6 +80,9 @@
 
 <table class="tasks">
     <!--  Вставка таблицы -->
+    <?php if (isset($search_error)) {?>
+        <p style="color: red"><?=$search_error?></p>
+    <?php } else {?>
     <?php foreach ($taskList as $key => $val) { ?>
         <?php if($val["status"] == 1) { ?>
             <!-- Завершенное задачи-->
@@ -116,7 +119,7 @@
                 <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
             </tr>
         <?php } ?>
-        <?php
-    } ?>
+        <?php } ?>
+    <?php } ?>
     <!-- Конец вставки -->
 </table>

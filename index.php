@@ -164,18 +164,38 @@ if (!$link) {
 }
 
 // Конец подключения к БД
-//$all_filter_param["search_text"]
+
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {
-    if (isset($all_filter_param["task_filter"])){
-        $filter_task = $all_filter_param["task_filter"];
-        $page_content = include_template("index.php", ["taskList" => $taskList,
-            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
-            "filter_task" => $filter_task]);
-    } else {
-        $page_content = include_template("index.php", ["taskList" => $taskList,
-            "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+    $index_flag = 0;
+    if (isset($all_filter_param["task_filter"])) {
+        $index_flag += 1;
+    }
+    if (isset($all_filter_param["search_text"])) {
+        $index_flag += 2;
+    }
+    switch ($index_flag){
+        case 1:
+            $filter_task = $all_filter_param["task_filter"];
+            $page_content = include_template("index.php", ["taskList" => $taskList,
+                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                "filter_task" => $filter_task]);
+            break;
+        case 2:
+            if (empty($taskList)) {
+                $search_error = "Ничего не найдено по вашему запросу";
+                $page_content = include_template("index.php", ["search_error" => $search_error,
+                    "show_complete_tasks" => $show_complete_tasks]);
+            } else {
+                $page_content = include_template("index.php", ["taskList" => $taskList,
+                    "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+            }
+            break;
+        default:
+            $page_content = include_template("index.php", ["taskList" => $taskList,
+                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+            break;
     }
 }
 
