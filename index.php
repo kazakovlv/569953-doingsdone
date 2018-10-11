@@ -6,7 +6,7 @@ require_once("functions.php");
 $title = "Дела в порядке";
 $filter_task = [];
 $all_filter_param = []; // Коллекция параметров фильтрации задач
-
+//$search_text = ""; //Переменная для поиска задач по названию
 session_start();
 
 if (!isset($_SESSION["user"])) {
@@ -54,19 +54,27 @@ if (!$link) {
     die($error);
 } else {
     mysqli_set_charset($link, "utf8");
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_GET['search_text'])) {
         //Вылидация формы
-        $search_text = $_POST["search_text"];
+        $search_text = $_GET["search_text"];
         $search_text = htmlspecialchars($search_text);
-        setcookie("project_id", null, -1, "/");
-        setcookie("task_filter", null, -1, "/");
-        if (isset($_COOKIE['show_completed'])) {
-            $show_complete_tasks = $_COOKIE['show_completed'];
-            if ($show_complete_tasks == 0) {
-                $projectFilter .= " AND tasks.`status` = 0";
+        $search_text = trim($search_text);
+        if (empty($search_text)) {
+            header("Location: /index.php");
+            exit();
+        } else {
+            setcookie("project_id", null, -1, "/");
+            setcookie("task_filter", null, -1, "/");
+            if (isset($_COOKIE['show_completed'])) {
+                $show_complete_tasks = $_COOKIE['show_completed'];
+                if ($show_complete_tasks == 0) {
+                    $projectFilter .= " AND tasks.`status` = 0";
+                }
             }
+            $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
+            $all_filter_param['search_text'] = 0;
         }
-        $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
+
     }
     if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
         setcookie("project_id", null, -1, "/");
@@ -156,7 +164,7 @@ if (!$link) {
 }
 
 // Конец подключения к БД
-
+//$all_filter_param["search_text"]
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
 } else {
