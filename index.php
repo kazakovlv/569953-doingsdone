@@ -58,6 +58,14 @@ if (!$link) {
         //Вылидация формы
         $search_text = $_POST["search_text"];
         $search_text = htmlspecialchars($search_text);
+        setcookie("project_id", null, -1, "/");
+        setcookie("task_filter", null, -1, "/");
+        if (isset($_COOKIE['show_completed'])) {
+            $show_complete_tasks = $_COOKIE['show_completed'];
+            if ($show_complete_tasks == 0) {
+                $projectFilter .= " AND tasks.`status` = 0";
+            }
+        }
         $projectFilter .= " AND MATCH ( task_name ) AGAINST ('$search_text' IN BOOLEAN MODE)";
     }
     if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
@@ -120,7 +128,7 @@ if (!$link) {
             if (isset($_COOKIE['show_completed'])) {
                 $show_complete_tasks = $_COOKIE['show_completed'];
                 if ($show_complete_tasks == 0) {
-                    $projectFilter .= "AND tasks.`status` = 0";
+                    $projectFilter .= " AND tasks.`status` = 0";
                 }
             }
         }
