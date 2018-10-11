@@ -180,4 +180,43 @@ function is_valid_date($date) {
     }
 }
 
+function switch_task_status($link, $task_id) {
+    $answer = false;
+    $sql = "SELECT tasks.`status` FROM tasks WHERE tasks.id = ?";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt,"i", $task_id);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+
+    if (count($res) == 1){
+        if ($res[0]["status"] == 0) {
+            $sql = "UPDATE tasks SET `status` = 1, tasks.date_completion = NOW() WHERE id = ?";
+        } else {
+            $sql = "UPDATE tasks SET `status` = 0, tasks.date_completion = '1970-01-01' WHERE id = ?";
+        }
+        $stmt = mysqli_prepare($link, $sql);
+        mysqli_stmt_bind_param($stmt,"i", $task_id);
+        mysqli_stmt_execute($stmt);
+        $answer = true;
+    }
+    return $answer;
+}
+
+function get_task_filter($task_filter) {
+    $dateFilter = "";
+    switch ($task_filter) {
+        case "today":
+            $dateFilter .= " AND tasks.date_deadline = CURDATE()";
+            break;
+        case "tomorrow":
+            $dateFilter .= " AND tasks.date_deadline = DATE_ADD( CURDATE(),Interval 1 DAY)";
+            break;
+        case "overdue":
+            $dateFilter .= " AND tasks.date_deadline <= DATE_ADD( CURDATE(), INTERVAL - 1 DAY )";
+            break;
+    }
+    return $dateFilter;
+}
+
 ?>
