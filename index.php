@@ -6,7 +6,7 @@ require_once("functions.php");
 $title = "Дела в порядке";
 $filter_task = [];
 $all_filter_param = []; // Коллекция параметров фильтрации задач
-//$search_text = ""; //Переменная для поиска задач по названию
+
 session_start();
 
 if (!isset($_SESSION["user"])) {
@@ -85,7 +85,7 @@ if (!$link) {
     } else {
         // Определение фильтра задач по проектам
         if (isset($_GET['project_id'])) {
-            if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($userData["id"], $_GET['project_id'])) {
+            if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($link, $userData["id"], $_GET['project_id'])) {
                 header("HTTP/1.1 404 Not Found");
                 $projectFilterError = true;
             }
@@ -180,7 +180,7 @@ if ($projectFilterError) {
             $filter_task = $all_filter_param["task_filter"];
             $page_content = include_template("index.php", ["taskList" => $taskList,
                 "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
-                "filter_task" => $filter_task]);
+                "filter_task" => $filter_task, "dateFormat" => $dateFormat]);
             break;
         case 2:
             if (empty($taskList)) {
@@ -189,12 +189,14 @@ if ($projectFilterError) {
                     "show_complete_tasks" => $show_complete_tasks]);
             } else {
                 $page_content = include_template("index.php", ["taskList" => $taskList,
-                    "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+                    "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                    "dateFormat" => $dateFormat]);
             }
             break;
         default:
             $page_content = include_template("index.php", ["taskList" => $taskList,
-                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project]);
+                "show_complete_tasks" => $show_complete_tasks, "active_project" => $active_project,
+                "dateFormat" => $dateFormat]);
             break;
     }
 }

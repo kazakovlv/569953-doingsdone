@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (is_fake($userData["id"], $taskItem["project"])) {
+    if (is_fake($link, $userData["id"], $taskItem["project"])) {
         $errors["project"] = "Ошибка выбора проекта";
     }
     //Конец валидации
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         if (isset($_FILES["taskFile"]["tmp_name"]) & $_FILES["taskFile"]["error"] == 0) {
             $fileName = uniqid() . "." . pathinfo($_FILES["taskFile"]["name"],PATHINFO_EXTENSION);
-            $filePath = "uploads/". uniqid() . "." . pathinfo($_FILES["taskFile"]["name"],PATHINFO_EXTENSION);
+            $filePath = "uploads/". $fileName;
             $sourceFile = $_FILES["taskFile"]["tmp_name"];
             move_uploaded_file($sourceFile, $filePath);
         }

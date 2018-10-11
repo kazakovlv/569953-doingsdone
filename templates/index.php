@@ -116,7 +116,7 @@
                         <a class="download-link" href="uploads/<?=$val["file_name"]?>" download><?=htmlspecialchars($val["file_name"]);?></a>
                     <?php } ?>
                 </td>
-                <td class="task__date"><?=showDate($val["date_deadline"]);?></td>
+                <td class="task__date"><?=showDate($dateFormat, $val["date_deadline"]);?></td>
             </tr>
         <?php } ?>
         <?php } ?>
