@@ -1,8 +1,8 @@
 <?php
-
 require_once("ini.php"); //Подключаем общие переменные
 require_once("functions.php");
-$title = "Дела в порядке";
+require_once("db_connect.php"); //Подключаем базу данных, при ошибке подключения получаем сообщение
+
 $projectList = [];
 
 session_start();
@@ -17,7 +17,6 @@ $userData = $_SESSION["user"];
 // Определение фильтра задач по проектам
 $projectFilter = "";
 $active_project = null;
-require_once("db_connect.php"); //Подключаем базу данных, при ошибке подключения получаем сообщение
 
 $sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count FROM projects ";
 $sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
