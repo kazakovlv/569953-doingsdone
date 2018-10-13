@@ -1,11 +1,6 @@
 <?php
-date_default_timezone_set('Europe/Moscow');
-setlocale(LC_ALL, 'ru_RU');
-$dateFormat = "d.m.Y";
-require_once("functions.php");
-$title = "Дела в порядке";
-$filter_task = [];
-$all_filter_param = []; // Коллекция параметров фильтрации задач
+require_once("ini.php"); //Подключаем общие переменные
+require_once("functions.php"); //Подключаем функции
 
 session_start();
 
