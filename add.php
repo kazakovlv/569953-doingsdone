@@ -1,7 +1,6 @@
 <?php
-date_default_timezone_set('Europe/Moscow');
-setlocale(LC_ALL, 'ru_RU');
-$dateFormat = "d.m.Y";
+
+require_once("ini.php"); //Подключаем общие переменные
 require_once("functions.php");
 $title = "Дела в порядке";
 $projectList = [];
@@ -18,24 +17,16 @@ $userData = $_SESSION["user"];
 // Определение фильтра задач по проектам
 $projectFilter = "";
 $active_project = null;
-$link = mysqli_connect("localhost", "root", "", "doingsdone");
+require_once("db_connect.php"); //Подключаем базу данных, при ошибке подключения получаем сообщение
 
-if (!$link) {
-    $error = mysqli_connect_error();
-    die($error);
-} else {
-    mysqli_set_charset($link, "utf8");
-
-    $sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count FROM projects ";
-    $sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
-    $sql = $sql . "WHERE projects.id_user = ? GROUP BY projects.id ORDER BY 2";
-    $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    $projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
-}
-
+$sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count FROM projects ";
+$sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
+$sql = $sql . "WHERE projects.id_user = ? GROUP BY projects.id ORDER BY 2";
+$stmt = mysqli_prepare($link, $sql);
+mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
+mysqli_stmt_execute($stmt);
+$res = mysqli_stmt_get_result($stmt);
+$projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
 $taskItem = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -46,7 +46,7 @@ $taskList = []; //Список задач
 $projectFilter = ""; // Определение фильтра задач по проектам
 $projectFilterError = false;
 
-require_once("dbconnect.php"); //Подключаем базу данных, при ошибке подключения получаем сообщение
+require_once("db_connect.php"); //Подключаем базу данных, при ошибке подключения получаем сообщение
 
 $active_project = null;
 
