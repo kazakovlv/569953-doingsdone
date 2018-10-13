@@ -31,6 +31,11 @@
         <?php }?>
     </div>
 
+    <div class="form__row">
+        <label class="form__label" for="contacts">Контактная информация</label>
+        <input class="form__input" type="text" name="contacts" id="contacts" value="" placeholder="Как с вами связаться?">
+    </div>
+
     <div class="form__row form__row--controls">
         <?php if (isset($errors)) {?>
             <p class="error-message">Пожалуйста, исправьте ошибки в форме</p>

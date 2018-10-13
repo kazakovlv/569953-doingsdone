@@ -14,10 +14,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $form = $_POST;
     foreach ($required as $key) {
         if (empty($form[$key])) {
-            $errors[$key] = 'Это поле надо заполнить';
+            $errors[$key] = 'Это поле надо заполнить !';
         }
     }
-
+    if (!filter_var($form["email"],FILTER_VALIDATE_EMAIL)) {
+        $errors["email"] = 'Ошибка заполнения поля email';
+    }
     $email = mysqli_real_escape_string($link, $form["email"]);
     $sql = "SELECT id FROM users WHERE email = '$email'";
     $res = mysqli_query($link, $sql);
