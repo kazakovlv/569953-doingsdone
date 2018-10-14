@@ -58,9 +58,9 @@ if (isset($_GET['search_text'])) {
     }
     setcookie("project_id", null, -1, "/");
     setcookie("task_filter", null, -1, "/");
-    if (isset($_COOKIE['show_completed']) && is_numeric($_GET['show_completed'])) {
+    if (isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
         $show_complete_tasks = $_COOKIE['show_completed'];
-        if ($show_complete_tasks == 0) {
+        if ($show_complete_tasks === 0) {
             $projectFilter .= " AND tasks.`status` = 0";
         }
     }
@@ -68,73 +68,86 @@ if (isset($_GET['search_text'])) {
     $all_filter_param['search_text'] = 0;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
+if ($_SERVER["REQUEST_METHOD"] === "GET" AND empty($_GET)) {
     setcookie("project_id", null, -1, "/");
     setcookie("task_filter", null, -1, "/");
     if (isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
         $show_complete_tasks = $_COOKIE['show_completed'];
     }
-} else {
-    // Определение фильтра задач по проектам
-    if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
-        if (empty($_GET['project_id']) OR !is_user_project($link, $userData["id"], $_GET['project_id'])) {
-            header("HTTP/1.1 404 Not Found");
-            $projectFilterError = true;
-        }
-        $all_filter_param['project_id'] =  $_GET['project_id']; //Добавляем фильтрацию по проекту
-        $projectFilter = " AND id_project = " . $_GET['project_id'];
-        setcookie("project_id", $_GET['project_id'], $cookie_expire, "/");
-        $active_project = $_GET['project_id'];
+    goto point1;
+}
+// Определение фильтра задач по проектам
+// Выбор проекта
+if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
+    if (empty($_GET['project_id']) OR !is_user_project($link, $userData["id"], $_GET['project_id'])) {
+        header("HTTP/1.1 404 Not Found");
+        $projectFilterError = true;
+    }
+    $all_filter_param['project_id'] =  $_GET['project_id']; //Добавляем фильтрацию по проекту
+    $projectFilter = " AND id_project = " . $_GET['project_id'];
+    setcookie("project_id", $_GET['project_id'], $cookie_expire, "/");
+    $active_project = $_GET['project_id'];
+}
+// Выбор фильтра по датам
+if (isset($_GET['task_filter']) && is_task_filter($_GET['task_filter'])) {
+    $all_filter_param['task_filter'] =  $_GET['task_filter']; //Добавляем фильтрацию датам выполнения задач
+    $projectFilter .= get_task_filter($_GET['task_filter']);
+    setcookie("task_filter", $_GET['task_filter'], $cookie_expire, "/");
+}
+// Конец Определение фильтра задач по проектам
+// Выбор/отмена показа выполненных задач
+if (isset($_GET['show_completed']) && is_numeric($_GET['show_completed'])) {
+    $show_complete_tasks = $_GET['show_completed'];
+    if ($show_complete_tasks > 0) {
+        $show_complete_tasks = 1;
+    }
+    $all_filter_param['show_completed'] = $show_complete_tasks;//Добавляем фильтрацию показа выполненных задач
+    setcookie("show_completed", $show_complete_tasks, $cookie_expire, "/");
+    if ($show_complete_tasks === 0) {
+        $projectFilter .= " AND tasks.`status` = 0";
     }
 
-    if (isset($_GET['task_filter']) && is_task_filter($_GET['task_filter'])) {
-        $all_filter_param['task_filter'] =  $_GET['task_filter']; //Добавляем фильтрацию датам выполнения задач
-        $projectFilter .= get_task_filter($_GET['task_filter']);
-        setcookie("task_filter", $_GET['task_filter'], $cookie_expire, "/");
+    if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
+        $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
+        $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
+        $active_project = $_COOKIE['project_id'];
     }
 
-    if (isset($_GET['show_completed']) && is_numeric($_GET['show_completed'])) {
-        $show_complete_tasks = $_GET['show_completed'];
-        if ($show_complete_tasks > 0) {
-            $show_complete_tasks = 1;
-        }
-        setcookie("show_completed", $_GET['show_completed'], $cookie_expire, "/");
-
-        if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
-            $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
-            $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
-            $active_project = $_COOKIE['project_id'];
-        }
-
-        if (isset($_COOKIE['task_filter']) && is_task_filter($_COOKIE['task_filter'])) {
-            $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
-            $projectFilter .= get_task_filter($_COOKIE['task_filter']);
-        }
+    if (isset($_COOKIE['task_filter']) && is_task_filter($_COOKIE['task_filter'])) {
+        $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
+        $projectFilter .= get_task_filter($_COOKIE['task_filter']);
+    }
+}
+// Выполнение/отмена задачи
+if (isset($_GET['task_id']) && is_numeric($_GET['task_id']) && isset($_GET['check'])) {
+    switch_task_status($link, $_GET['task_id'], $userData["id"]);
+    if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
+        $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
+        $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
+        $active_project = $_COOKIE['project_id'];
     }
 
-    if (isset($_GET['task_id']) && is_numeric($_GET['task_id']) && isset($_GET['check'])) {
-        switch_task_status($link, $_GET['task_id'], $userData["id"]);
-        if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
-            $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
-            $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
-            $active_project = $_COOKIE['project_id'];
-        }
-
-        if (isset($_COOKIE['task_filter'])  && is_task_filter($_COOKIE['task_filter'])) {
-            $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
-            $projectFilter .= get_task_filter($_COOKIE['task_filter']);
-        }
-
-        if (isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
-            $show_complete_tasks = $_COOKIE['show_completed'];
-            if ($show_complete_tasks == 0) {
-                $projectFilter .= " AND tasks.`status` = 0";
-            }
-        }
+    if (isset($_COOKIE['task_filter'])  && is_task_filter($_COOKIE['task_filter'])) {
+        $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
+        $projectFilter .= get_task_filter($_COOKIE['task_filter']);
     }
 }
 
-$all_filter_param['show_completed'] = $show_complete_tasks;//Добавляем фильтрацию показа выполненных задач
+point1:
+//Установка значения показывать выполненные задачи или нет для всех случаев кроме isset($_GET['show_completed'])
+if (!isset($all_filter_param['show_completed'])
+    && isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
+
+    $show_complete_tasks = $_COOKIE['show_completed'];
+    if ($show_complete_tasks > 0) {
+        $show_complete_tasks = 1;
+    }
+    $all_filter_param['show_completed'] = $show_complete_tasks;
+    if ($show_complete_tasks === 0) {
+        $projectFilter .= " AND tasks.`status` = 0";
+    }
+
+}
 
 $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion,tasks.`status`,tasks.task_name,";
 $sql = $sql . "tasks.file_name,tasks.date_deadline ";
