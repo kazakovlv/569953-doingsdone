@@ -119,28 +119,6 @@ function searchTasks($link, $userId, $textSearch) {
     return $tasks;
 }
 
-/**
- * Возвращает true если проект принадлежит пользователю
- *
- * @param $link mysqli Ресурс соединения
- * @param $userId integer Идентификатор пользователя
- * @param $projectId integer Идентификатор проекта
- *
- * @return bool
- */
-function is_fake($link, $userId, $projectId) {
-    $answer = false;
-    if (is_numeric($userId) && is_numeric($projectId)) {
-        $sql = "SELECT projects.id FROM projects WHERE projects.id_user = " . $userId . " AND projects.id = " . $projectId;
-        $res = mysqli_query($link, $sql);
-        $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
-        if (count($res) == 0){
-            $answer = true;
-        }
-    }
-    return $answer;
-}
-
 function is_valid_date($date) {
     $ts_date = strtotime($date);
     $new_date = date("Y-m-d", $ts_date);
@@ -151,11 +129,11 @@ function is_valid_date($date) {
     }
 }
 
-function switch_task_status($link, $task_id) {
+function switch_task_status($link, $task_id, $user_id) {
     $answer = false;
-    $sql = "SELECT tasks.`status` FROM tasks WHERE tasks.id = ?";
+    $sql = "SELECT tasks.`status` FROM tasks WHERE tasks.id = ? AND tasks.id_user = ?";
     $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"i", $task_id);
+    mysqli_stmt_bind_param($stmt,"ii", $task_id, $user_id);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
@@ -272,6 +250,58 @@ function is_task_filter($task_filter) {
     $tmp = htmlspecialchars($task_filter);
     if (!empty($tmp) && ($tmp === "all" OR $tmp === "today" OR $tmp === "tomorrow" OR $tmp === "overdue")) {
         $answer = true;
+    }
+    return $answer;
+}
+
+/**
+ * Возвращает true если задача принадлежит пользователю
+ *
+ * @param $link mysqli Ресурс соединения
+ * @param $user_id integer Идентификатор пользователя
+ * @param $task_id integer Идентификатор проекта
+ *
+ * @return bool
+ */
+function is_user_task($link, $user_id, $task_id) {
+    $answer = false;
+    if (is_numeric($task_id) && is_numeric($user_id)) {
+        $sql = "SELECT id FROM tasks WHERE id_user = ? AND id = ?";
+        $stmt = mysqli_prepare($link, $sql);
+        mysqli_stmt_bind_param($stmt,"ii",$user_id, $task_id);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+        $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+
+        if (count($res) == 1){
+            $answer = true;
+        }
+    }
+    return $answer;
+}
+
+/**
+ * Возвращает true если проект принадлежит пользователю
+ *
+ * @param $link mysqli Ресурс соединения
+ * @param $user_id integer Идентификатор пользователя
+ * @param $project_id integer Идентификатор проекта
+ *
+ * @return bool
+ */
+function is_user_project($link, $user_id, $project_id) {
+    $answer = false;
+    if (is_numeric($user_id) && is_numeric($project_id)) {
+        $sql = "SELECT projects.id FROM projects WHERE projects.id_user = ? AND projects.id = ?";
+        $stmt = mysqli_prepare($link, $sql);
+        mysqli_stmt_bind_param($stmt,"ii",$user_id, $project_id);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+        $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+
+        if (count($res) == 1){
+            $answer = true;
+        }
     }
     return $answer;
 }

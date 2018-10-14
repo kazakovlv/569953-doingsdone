@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
 } else {
     // Определение фильтра задач по проектам
     if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
-        if (empty($_GET['project_id']) OR !is_numeric($_GET['project_id']) OR is_fake($link, $userData["id"], $_GET['project_id'])) {
+        if (empty($_GET['project_id']) OR !is_user_project($link, $userData["id"], $_GET['project_id'])) {
             header("HTTP/1.1 404 Not Found");
             $projectFilterError = true;
         }
@@ -90,16 +90,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
     if (isset($_GET['task_filter']) && is_task_filter($_GET['task_filter'])) {
         $all_filter_param['task_filter'] =  $_GET['task_filter']; //Добавляем фильтрацию датам выполнения задач
         $projectFilter .= get_task_filter($_GET['task_filter']);
-        $cookie_expire = strtotime("+1 days");
         setcookie("task_filter", $_GET['task_filter'], $cookie_expire, "/");
     }
 
     if (isset($_GET['show_completed']) && is_numeric($_GET['show_completed'])) {
         $show_complete_tasks = $_GET['show_completed'];
-        $cookie_expire = strtotime("+1 days");
+        if ($show_complete_tasks > 0) {
+            $show_complete_tasks = 1;
+        }
         setcookie("show_completed", $_GET['show_completed'], $cookie_expire, "/");
 
-        if (isset($_COOKIE['project_id']) && is_numeric($_COOKIE['project_id'])) {
+        if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
             $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
             $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
             $active_project = $_COOKIE['project_id'];
@@ -112,8 +113,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" AND empty($_GET)) {
     }
 
     if (isset($_GET['task_id']) && is_numeric($_GET['task_id']) && isset($_GET['check'])) {
-        switch_task_status($link, $_GET['task_id']);
-        if (isset($_COOKIE['project_id']) && is_numeric($_COOKIE['project_id'])) {
+        switch_task_status($link, $_GET['task_id'], $userData["id"]);
+        if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
             $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
             $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
             $active_project = $_COOKIE['project_id'];

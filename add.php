@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (is_fake($link, $userData["id"], $taskItem["project"])) {
+    if (!is_user_project($link, $userData["id"], $taskItem["project"])) {
         $errors["project"] = "Ошибка выбора проекта";
     }
     //Конец валидации
