@@ -17,15 +17,15 @@ function include_template($name, $data) {
 }
 
 function summTask($ListTasks, $projectId) {
-    $summItems = 0;
+    $summ_items = 0;
 
     foreach ($ListTasks as $key => $value) {
         if($value["id_project"] == $projectId) {
-            $summItems ++;
+            $summ_items ++;
         }
     }
 
-    return $summItems;
+    return $summ_items;
 }
 
 // Если разница дат текущей и введенной меньше или равно 24 часам возвращает "task--important"
@@ -119,13 +119,24 @@ function searchTasks($link, $userId, $textSearch) {
     return $tasks;
 }
 
+/**
+ * Возвращает true если проект принадлежит пользователю
+ *
+ * @param $link mysqli Ресурс соединения
+ * @param $userId integer Идентификатор пользователя
+ * @param $projectId integer Идентификатор проекта
+ *
+ * @return bool
+ */
 function is_fake($link, $userId, $projectId) {
     $answer = false;
-    $sql = "SELECT projects.id FROM projects WHERE projects.id_user = " . $userId . " AND projects.id = " . $projectId;
-    $res = mysqli_query($link, $sql);
-    $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
-    if (count($res) == 0){
-        $answer = true;
+    if (is_numeric($userId) && is_numeric($projectId)) {
+        $sql = "SELECT projects.id FROM projects WHERE projects.id_user = " . $userId . " AND projects.id = " . $projectId;
+        $res = mysqli_query($link, $sql);
+        $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+        if (count($res) == 0){
+            $answer = true;
+        }
     }
     return $answer;
 }
@@ -247,5 +258,21 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
     }
 
     return $stmt;
+}
+
+/**
+ * Возвращает true если это фильтры по датам задач
+ *
+ * @param $task_filter string Наименование проекта
+ *
+ * @return bool
+ */
+function is_task_filter($task_filter) {
+    $answer = false;
+    $tmp = htmlspecialchars($task_filter);
+    if (!empty($tmp) && ($tmp === "all" OR $tmp === "today" OR $tmp === "tomorrow" OR $tmp === "overdue")) {
+        $answer = true;
+    }
+    return $answer;
 }
 ?>
