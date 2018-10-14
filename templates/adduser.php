@@ -33,7 +33,11 @@
 
     <div class="form__row">
         <label class="form__label" for="contacts">Контактная информация</label>
-        <input class="form__input" type="text" name="contacts" id="contacts" value="" placeholder="Как с вами связаться?">
+        <?php if (isset($errors)) {?>
+            <input class="form__input" type="text" name="contacts" id="contacts" value="<?=$form["contacts"];?>" placeholder="Как с вами связаться?">
+        <?php } else {?>
+            <input class="form__input" type="text" name="contacts" id="contacts" value="" placeholder="Как с вами связаться?">
+        <?php }?>
     </div>
 
     <div class="form__row form__row--controls">
