@@ -214,4 +214,30 @@ function get_task_filter($task_filter) {
     return $dateFilter;
 }
 
+
+/**
+ * Возвращает true если такого Названия проекта нет, в противном случае false
+ *
+ * @param $link mysqli Ресурс соединения
+ * @param $user_id integer Иднтификатор пользователя
+ * @param $project_name string Наименование проекта
+ *
+ * @return bool
+ */
+function check_project_name($link, $user_id, $project_name) {
+    $answer = false;
+    $project_name_upper = strtoupper($project_name);
+    $sql = "SELECT id FROM projects WHERE id_user = ?  AND UPPER(project_name) = ?";
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt,"is",$user_id,$project_name_upper);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+
+    if (count($res) == 0){
+        $answer = true;
+    }
+    return $answer;
+}
+
 ?>

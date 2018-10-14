@@ -17,24 +17,36 @@ $userData = $_SESSION["user"];
 $projectItem = null;
 $active_project = null;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $projectItem = $_POST["name_project"];
-    if (empty($projectItem)) {
-        $errors = 'Это поле надо заполнить';
-        $page_content = include_template("addproject.php", ["errors" => $errors]);
-    } else {
-        $sql = "INSERT INTO projects (id_user, project_name) VALUES (?, ?);";
-        $stmt = mysqli_prepare($link, $sql);
-        mysqli_stmt_bind_param($stmt,"is",$userData["id"],$projectItem );
-        $res = mysqli_stmt_execute($stmt);
-        if ($res) {
-            $project_id = mysqli_insert_id($link);
-            header("Location: /");
-        }
-    }
-} else {
+if ($_SERVER["REQUEST_METHOD"] != "POST") {
     $page_content = include_template("addproject.php", []);
+    goto end_of_if;
 }
+
+/*Проверка на заполнение поля*/
+$projectItem = $_POST["name_project"];
+$projectItem = htmlspecialchars($projectItem);
+if (empty($projectItem)) {
+    $errors = 'Это поле надо заполнить';
+    $page_content = include_template("addproject.php", ["errors" => $errors]);
+    goto end_of_if;
+}
+
+/*Проверка на существующий проект*/
+if (!check_project_name($link, $userData["id"], $projectItem)) {
+    $errors = 'Проект с таким названием уже существует';
+    $page_content = include_template("addproject.php", ["errors" => $errors]);
+    goto end_of_if;
+}
+$sql = "INSERT INTO projects (id_user, project_name) VALUES (?, ?);";
+$stmt = mysqli_prepare($link, $sql);
+mysqli_stmt_bind_param($stmt,"is",$userData["id"],$projectItem );
+$res = mysqli_stmt_execute($stmt);
+if ($res) {
+    $project_id = mysqli_insert_id($link);
+    header("Location: /index.php");
+}
+
+end_of_if :
 
 mysqli_set_charset($link, "utf8");
 $sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count FROM projects ";
