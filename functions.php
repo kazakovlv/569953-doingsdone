@@ -1,4 +1,10 @@
 <?php
+/**
+ * Возвращает html контекст заполненный данными из переменных
+ * @param $name string Имя шаблона
+ * @param $data array Массив переменных для заполнения
+ * @return false|string
+ */
 function include_template($name, $data) {
     $name = "templates/" . $name;
     $result = "";
@@ -16,6 +22,12 @@ function include_template($name, $data) {
     return $result;
 }
 
+/**
+ * Подсчитывает количество задач в указанном проекте
+ * @param $ListTasks array Массив задач
+ * @param $projectId integer Идентификатор прпоекта
+ * @return int Количество задач
+ */
 function summTask($ListTasks, $projectId) {
     $summ_items = 0;
 
@@ -29,6 +41,11 @@ function summTask($ListTasks, $projectId) {
 }
 
 // Если разница дат текущей и введенной меньше или равно 24 часам возвращает "task--important"
+/**
+ * Проверяет срок исполнения задачи, если меньше 24 часов, то она важная
+ * @param $checking_date Проверяемая дата
+ * @return string Возвращает класс task--important, если дата меньше 24 часов
+ */
 function isImportant($checking_date) {
     $marker = "";
     if ($checking_date !="1970-01-01 00:00:00") {
@@ -42,6 +59,12 @@ function isImportant($checking_date) {
     return $marker;
 }
 
+/**
+ * Форматирует дату, если она 1970-01-01 00:00:00 возвращает пустое место
+ * @param $dateFormat string Формат
+ * @param $DateTime Дата
+ * @return DateTime|false|string
+ */
 function showDate($dateFormat, $DateTime) {
     if($DateTime == "1970-01-01 00:00:00") {
         $showDate = "";
@@ -53,6 +76,13 @@ function showDate($dateFormat, $DateTime) {
 }
 
 /*Уведомления о предстоящих задачах [необязательно]*/
+/**
+ * Возвращает тело письма
+ * @param $link mysqli Параметры соединения
+ * @param $userId integer Идентификатор пользователя
+ * @param $userName string Имя пользователя
+ * @return bool|string Текст или false в случае неудачи
+ */
 function getHotTasks($link, $userId, $userName) {
     $letter = false;
     $sql = "SELECT tasks.task_name, tasks.date_deadline FROM tasks WHERE ";
@@ -83,7 +113,8 @@ function getHotTasks($link, $userId, $userName) {
 }
 
 /**
- * @param $link
+ * Функция отправляет письма пользователям, сроки исполнения который меньше часа
+ * @param $link mysqli
  */
 function sendLetters($link) {
     $sql = "SELECT Count( tasks.id ) AS Count,users.id,users.user_name,users.email FROM tasks ";
@@ -105,10 +136,11 @@ function sendLetters($link) {
 /*Конец Уведомления о предстоящих задачах [необязательно]*/
 /*Поиск [необязательно]*/
 /**
- * @param $link
- * @param $userId
- * @param $textSearch
- * @return array|null
+ * Функция поиска
+ * @param $link mysqli Параметры подключения
+ * @param $userId integer Идентификатор пользователя
+ * @param $textSearch string Строка из слов для поиска
+ * @return array|null Возвращает массив найденного
  */
 function searchTasks($link, $userId, $textSearch) {
     $tasks = [];
@@ -129,19 +161,27 @@ function searchTasks($link, $userId, $textSearch) {
 }
 
 /**
+ * Функция проверяет дата ли это
  * @param $date
  * @return bool
  */
 function is_valid_date($date) {
+    $answer = false;
     $ts_date = strtotime($date);
     $new_date = date("Y-m-d", $ts_date);
     if ($date == $new_date) {
-        return true;
-    } else {
-        return false;
+        $answer = true;
     }
+    return $answer;
 }
 
+/**
+ * Функия меняет значение исполнения задачи на противоположный
+ * @param $link mysqli параметры подключения
+ * @param $task_id integer Идентификатор задачи
+ * @param $user_id integer Идентификатор пользователя
+ * @return bool
+ */
 function switch_task_status($link, $task_id, $user_id) {
     $answer = false;
     $sql = "SELECT tasks.`status` FROM tasks WHERE tasks.id = ? AND tasks.id_user = ?";
@@ -165,6 +205,11 @@ function switch_task_status($link, $task_id, $user_id) {
     return $answer;
 }
 
+/**
+ * Возвращает дополнительные условия отбора
+ * @param $task_filter string
+ * @return string
+ */
 function get_task_filter($task_filter) {
     $dateFilter = "";
     switch ($task_filter) {

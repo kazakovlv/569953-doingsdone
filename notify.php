@@ -18,19 +18,20 @@ $sql = $sql . "LEFT JOIN users ON tasks.id_user = users.id WHERE tasks.`status` 
 $sql = $sql . "AND tasks.date_deadline != \"1970-01-01 00:00:00\" AND tasks.date_deadline <= ( NOW( ) + INTERVAL 1 HOUR ) ";
 $sql = $sql . "GROUP BY users.id";
 $res = mysqli_query($link, $sql);
-$res = mysqli_fetch_all($res,MYSQLI_ASSOC);
+$res = mysqli_fetch_all($res, MYSQLI_ASSOC);
+
 foreach ($res as $key => $value) {
+    $letter = getHotTasks($link, $value["id"], $value["user_name"]);
     $message = new Swift_Message();
-    $message->setSubject("Уведомление от сервиса \"Дела в порядке\".");
-    $message->setFrom(['keks@phpdemo.ru' => 'GifTube']);
-    $message->setBcc($value["email"]);
-    $message->setBody($letter, 'text/html');
+    $message->setTo($value["email"]);
+    $message->setSubject("Уведомление от сервиса Дела в порядке.");
+    $message->setFrom("keks@phpdemo.ru", "Дела в порядке");
+    $message->setBody($letter, "text/html");
     $result = $mailer->send($message);
 
     if ($result) {
         print("Рассылка успешно отправлена");
-    }
-    else {
+    } else {
         print("Не удалось отправить рассылку: " . $logger->dump());
     }
 }
