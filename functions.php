@@ -82,6 +82,9 @@ function getHotTasks($link, $userId, $userName) {
     return $letter;
 }
 
+/**
+ * @param $link
+ */
 function sendLetters($link) {
     $sql = "SELECT Count( tasks.id ) AS Count,users.id,users.user_name,users.email FROM tasks ";
     $sql = $sql . "LEFT JOIN users ON tasks.id_user = users.id WHERE tasks.`status` = 0 ";
@@ -101,6 +104,12 @@ function sendLetters($link) {
 }
 /*Конец Уведомления о предстоящих задачах [необязательно]*/
 /*Поиск [необязательно]*/
+/**
+ * @param $link
+ * @param $userId
+ * @param $textSearch
+ * @return array|null
+ */
 function searchTasks($link, $userId, $textSearch) {
     $tasks = [];
     $textSearch = trim($textSearch);
@@ -119,6 +128,10 @@ function searchTasks($link, $userId, $textSearch) {
     return $tasks;
 }
 
+/**
+ * @param $date
+ * @return bool
+ */
 function is_valid_date($date) {
     $ts_date = strtotime($date);
     $new_date = date("Y-m-d", $ts_date);
