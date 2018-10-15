@@ -9,4 +9,4 @@ $connection['host'] = "localhost"; // Адрес сервера
 $connection['user'] = "root"; //Пользователь БД
 $connection['password'] = ""; //Пароль Пользователя БД
 $connection['database'] = "doingsdone"; // Название БД
-?>
+

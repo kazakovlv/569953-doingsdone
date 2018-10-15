@@ -8,7 +8,7 @@ $projectList = [];
 session_start();
 if (!isset($_SESSION["user"])) {
     $page_content = include_template("guest.php", []);
-    $layout_content = include_template("layout.php",  ["title" => $title, "page_content" => $page_content]);
+    $layout_content = include_template("layout.php", ["title" => $title, "page_content" => $page_content]);
     print($layout_content);
     exit();
 }
@@ -22,14 +22,14 @@ $sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count
 $sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
 $sql = $sql . "WHERE projects.id_user = ? GROUP BY projects.id ORDER BY 2";
 $stmt = mysqli_prepare($link, $sql);
-mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
+mysqli_stmt_bind_param($stmt, "i", $userData["id"]);
 mysqli_stmt_execute($stmt);
 $res = mysqli_stmt_get_result($stmt);
-$projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
+$projectList = mysqli_fetch_all($res, MYSQLI_ASSOC);
 $taskItem = [];
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    $page_content = include_template("add.php", ["projectList" =>$projectList, "taskItem" => $taskItem]);
+    $page_content = include_template("add.php", ["projectList" => $projectList, "taskItem" => $taskItem]);
     goto output;
 }
 //Вылидация формы
@@ -58,29 +58,32 @@ $sourceFile = "";
 if (count($errors)) {
     $page_content = include_template("add.php", ["projectList" => $projectList, "taskItem" => $taskItem,
         "errors" => $errors]);
-} else {
-    if (isset($_FILES["taskFile"]["tmp_name"]) & $_FILES["taskFile"]["error"] == 0) {
-        $fileName = uniqid() . "." . pathinfo($_FILES["taskFile"]["name"],PATHINFO_EXTENSION);
-        $filePath = "uploads/". $fileName;
-        $sourceFile = $_FILES["taskFile"]["tmp_name"];
-        move_uploaded_file($sourceFile, $filePath);
-    }
+    goto output;
+}
 
-    $sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
-    $sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
-    $stmt = mysqli_prepare($link, $sql);
-    mysqli_stmt_bind_param($stmt,"iisss",$userData["id"], $taskItem["project"], $taskItem["name"], $fileName, $taskItem["date"]);
-    $res = mysqli_stmt_execute($stmt);
-    if ($res) {
-        $task_id = mysqli_insert_id($link);
-        //header("Location: /?project_id=" . $taskItem["project"]);
-        header("Location: /");
+if (isset($_FILES["taskFile"]["tmp_name"]) && $_FILES["taskFile"]["error"] === 0) {
+    $fileName = uniqid() . "." . pathinfo($_FILES["taskFile"]["name"], PATHINFO_EXTENSION);
+    if (!file_exists("uploads/")) {
+        mkdir("uploads/");
     }
+    $filePath = "uploads/" . $fileName;
+    $sourceFile = $_FILES["taskFile"]["tmp_name"];
+    move_uploaded_file($sourceFile, $filePath);
+}
 
+$sql = "INSERT INTO `tasks` ( id_user, id_project, date_create, date_completion, `status`, task_name, file_name, date_deadline ) ";
+$sql = $sql . "VALUES ( ?, ?, NOW( ), '1970-01-01', 0, ?, ?, ? )";
+$stmt = mysqli_prepare($link, $sql);
+mysqli_stmt_bind_param($stmt, "iisss", $userData["id"], $taskItem["project"], $taskItem["name"], $fileName, $taskItem["date"]);
+$res = mysqli_stmt_execute($stmt);
+if ($res) {
+    $task_id = mysqli_insert_id($link);
+    //header("Location: /?project_id=" . $taskItem["project"]);
+    header("Location: /");
 }
 
 output:
-$layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+$layout_content = include_template("layout.php", ["title" => $title, "projectList" => $projectList,
     "page_content" => $page_content, "active_project" => $active_project, "userData" => $userData]);
 print($layout_content);
-?>
+

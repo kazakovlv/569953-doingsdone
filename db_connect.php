@@ -9,4 +9,4 @@ if (!$link) {
 } else {
     mysqli_set_charset($link, "utf8");
 }
-?>
+

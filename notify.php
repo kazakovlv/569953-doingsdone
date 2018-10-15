@@ -36,4 +36,3 @@ foreach ($res as $key => $value) {
     }
 }
 
-?>

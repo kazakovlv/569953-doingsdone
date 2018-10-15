@@ -32,7 +32,7 @@ if (!isset($_SESSION["user"])) {
         exit();
     }
     $page_content = include_template("guest.php", []);
-    $layout_content = include_template("layout.php",  ["title" => $title, "page_content" => $page_content]);
+    $layout_content = include_template("layout.php", ["title" => $title, "page_content" => $page_content]);
     print($layout_content);
     exit();
 }
@@ -83,14 +83,14 @@ if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
         header("HTTP/1.1 404 Not Found");
         $projectFilterError = true;
     }
-    $all_filter_param['project_id'] =  $_GET['project_id']; //Добавляем фильтрацию по проекту
+    $all_filter_param['project_id'] = $_GET['project_id']; //Добавляем фильтрацию по проекту
     $projectFilter = " AND id_project = " . $_GET['project_id'];
     setcookie("project_id", $_GET['project_id'], $cookie_expire, "/");
     $active_project = $_GET['project_id'];
 }
 // Выбор фильтра по датам
 if (isset($_GET['task_filter']) && is_task_filter($_GET['task_filter'])) {
-    $all_filter_param['task_filter'] =  $_GET['task_filter']; //Добавляем фильтрацию датам выполнения задач
+    $all_filter_param['task_filter'] = $_GET['task_filter']; //Добавляем фильтрацию датам выполнения задач
     $projectFilter .= get_task_filter($_GET['task_filter']);
     setcookie("task_filter", $_GET['task_filter'], $cookie_expire, "/");
 }
@@ -109,12 +109,12 @@ if (isset($_GET['show_completed']) && is_numeric($_GET['show_completed'])) {
 
     if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
         $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
-        $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
+        $all_filter_param['project_id'] = $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
         $active_project = $_COOKIE['project_id'];
     }
 
     if (isset($_COOKIE['task_filter']) && is_task_filter($_COOKIE['task_filter'])) {
-        $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
+        $all_filter_param['task_filter'] = $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
         $projectFilter .= get_task_filter($_COOKIE['task_filter']);
     }
 }
@@ -123,12 +123,12 @@ if (isset($_GET['task_id']) && is_numeric($_GET['task_id']) && isset($_GET['chec
     switch_task_status($link, $_GET['task_id'], $userData["id"]);
     if (isset($_COOKIE['project_id']) && is_user_project($link, $userData["id"], $_COOKIE['project_id'])) {
         $projectFilter = " AND id_project = " . $_COOKIE['project_id'];
-        $all_filter_param['project_id'] =  $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
+        $all_filter_param['project_id'] = $_COOKIE['project_id']; //Добавляем фильтрацию по проекту
         $active_project = $_COOKIE['project_id'];
     }
 
-    if (isset($_COOKIE['task_filter'])  && is_task_filter($_COOKIE['task_filter'])) {
-        $all_filter_param['task_filter'] =  $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
+    if (isset($_COOKIE['task_filter']) && is_task_filter($_COOKIE['task_filter'])) {
+        $all_filter_param['task_filter'] = $_COOKIE['task_filter']; //Добавляем фильтрацию датам выполнения задач
         $projectFilter .= get_task_filter($_COOKIE['task_filter']);
     }
 }
@@ -153,19 +153,19 @@ $sql = "SELECT tasks.id,tasks.id_project,tasks.date_create,tasks.date_completion
 $sql = $sql . "tasks.file_name,tasks.date_deadline ";
 $sql = $sql . "FROM tasks WHERE tasks.id_user = ?" . $projectFilter . " ORDER BY tasks.date_create DESC";
 $stmt = mysqli_prepare($link, $sql);
-mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
+mysqli_stmt_bind_param($stmt, "i", $userData["id"]);
 mysqli_stmt_execute($stmt);
 $res = mysqli_stmt_get_result($stmt);
-$taskList = mysqli_fetch_all($res,MYSQLI_ASSOC);
+$taskList = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
 $sql = "SELECT projects.id,projects.project_name,Count( tasks.id ) AS task_count FROM projects ";
 $sql = $sql . "LEFT JOIN tasks ON tasks.id_project = projects.id ";
 $sql = $sql . "WHERE projects.id_user = ? GROUP BY projects.id ORDER BY 2";
 $stmt = mysqli_prepare($link, $sql);
-mysqli_stmt_bind_param($stmt,"i", $userData["id"]);
+mysqli_stmt_bind_param($stmt, "i", $userData["id"]);
 mysqli_stmt_execute($stmt);
 $res = mysqli_stmt_get_result($stmt);
-$projectList = mysqli_fetch_all($res,MYSQLI_ASSOC);
+$projectList = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
 if ($projectFilterError) {
     $page_content = "<h2>Not Found!</h2>";
@@ -181,7 +181,7 @@ if (isset($all_filter_param["search_text"])) {
     $index_flag += 2;
 }
 
-switch ($index_flag){
+switch ($index_flag) {
     case 1:
         $filter_task = $all_filter_param["task_filter"];
         $page_content = include_template("index.php", ["taskList" => $taskList,
@@ -209,13 +209,12 @@ switch ($index_flag){
 output:
 
 if (isset($all_filter_param["task_filter"])) {
-    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+    $layout_content = include_template("layout.php", ["title" => $title, "projectList" => $projectList,
         "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project,
         "filter_task" => $filter_task, "userData" => $userData]);
 } else {
-    $layout_content = include_template("layout.php",  ["title" => $title, "projectList" => $projectList,
+    $layout_content = include_template("layout.php", ["title" => $title, "projectList" => $projectList,
         "taskList" => $taskList, "page_content" => $page_content, "active_project" => $active_project,
         "userData" => $userData]);
 }
 print($layout_content);
-?>
