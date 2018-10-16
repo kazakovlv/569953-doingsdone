@@ -60,7 +60,7 @@ if (isset($_GET['search_text'])) {
     setcookie("task_filter", null, -1, "/");
     if (isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
         $show_complete_tasks = $_COOKIE['show_completed'];
-        if ($show_complete_tasks === 0) {
+        if ((int)$show_complete_tasks === 0) {
             $projectFilter .= " AND tasks.`status` = 0";
         }
     }
@@ -68,7 +68,7 @@ if (isset($_GET['search_text'])) {
     $all_filter_param['search_text'] = 0;
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "GET" AND empty($_GET)) {
+if ((string)$_SERVER["REQUEST_METHOD"] === "GET" AND empty($_GET)) {
     setcookie("project_id", null, -1, "/");
     setcookie("task_filter", null, -1, "/");
     if (isset($_COOKIE['show_completed']) && is_numeric($_COOKIE['show_completed'])) {
@@ -103,7 +103,7 @@ if (isset($_GET['show_completed']) && is_numeric($_GET['show_completed'])) {
     }
     $all_filter_param['show_completed'] = $show_complete_tasks;//Добавляем фильтрацию показа выполненных задач
     setcookie("show_completed", $show_complete_tasks, $cookie_expire, "/");
-    if ($show_complete_tasks === 0) {
+    if ((int)$show_complete_tasks === 0) {
         $projectFilter .= " AND tasks.`status` = 0";
     }
 
@@ -143,7 +143,7 @@ if (!isset($all_filter_param['show_completed'])
         $show_complete_tasks = 1;
     }
     $all_filter_param['show_completed'] = $show_complete_tasks;
-    if ($show_complete_tasks === 0) {
+    if ((int)$show_complete_tasks === 0) {
         $projectFilter .= " AND tasks.`status` = 0";
     }
 

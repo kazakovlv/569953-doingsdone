@@ -28,7 +28,7 @@
             <?php } else {?>
                 <select class="form__input form__input--select" name="taskItem[project]" id="project">
                     <?php foreach ($projectList as $key => $val) { ?>
-                        <?php if ($val["id"] == $taskItem["project"]) {?>
+                        <?php if ((int)$val["id"] === (int)$taskItem["project"]) {?>
                         <option value="<?=$val["id"]; ?>" selected="selected"><?=$val["project_name"]; ?></option>
                         <?php } else {?>
                         <option value="<?=$val["id"]; ?>"><?=$val["project_name"]; ?></option>

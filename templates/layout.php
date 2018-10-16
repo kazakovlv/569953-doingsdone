@@ -47,7 +47,7 @@
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
                         <?php foreach ($projectList as $key => $val) { ?>
-                            <?php if ($active_project == $val["id"]) { ?>
+                            <?php if ((int)$active_project === (int)$val["id"]) { ?>
                                 <li class="main-navigation__list-item main-navigation__list-item--active">
                             <?php } else { ?>
                                 <li class="main-navigation__list-item">

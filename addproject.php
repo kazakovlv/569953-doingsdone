@@ -17,7 +17,7 @@ $userData = $_SESSION["user"];
 $projectItem = null;
 $active_project = null;
 
-if ($_SERVER["REQUEST_METHOD"] != "POST") {
+if ((string)$_SERVER["REQUEST_METHOD"] !== "POST") {
     $page_content = include_template("addproject.php", []);
     goto end_of_if;
 }

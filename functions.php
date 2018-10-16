@@ -34,7 +34,7 @@ function summTask($ListTasks, $projectId)
     $summ_items = 0;
 
     foreach ($ListTasks as $key => $value) {
-        if ($value["id_project"] == $projectId) {
+        if ((int)$value["id_project"] === (int)$projectId) {
             $summ_items++;
         }
     }
@@ -70,7 +70,7 @@ function isImportant($checking_date)
  */
 function showDate($dateFormat, $DateTime)
 {
-    if ($DateTime == "1970-01-01 00:00:00") {
+    if ((string)$DateTime === "1970-01-01 00:00:00") {
         $showDate = "";
         return $showDate;
     }
@@ -178,7 +178,7 @@ function is_valid_date($date)
     $answer = false;
     $ts_date = strtotime($date);
     $new_date = date("Y-m-d", $ts_date);
-    if ($date == $new_date) {
+    if ($date === $new_date) {
         $answer = true;
     }
     return $answer;
@@ -381,7 +381,7 @@ function is_user_project($link, $user_id, $project_id)
         $res = mysqli_stmt_get_result($stmt);
         $res = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
-        if (count($res) == 1) {
+        if (count($res) === 1) {
             $answer = true;
         }
     }

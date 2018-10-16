@@ -26,7 +26,7 @@ $sql = "SELECT * FROM users WHERE email = '$email'";
 $res = mysqli_query($link, $sql);
 $user = $res ? mysqli_fetch_array($res, MYSQLI_ASSOC) : null;
 
-if ($user == null) {
+if ($user === null) {
     $errors["email"] = "Такой пользователь не найден";
     goto end_of_post;
 }
@@ -42,7 +42,7 @@ $headerStr = "Location: /index.php";
 $getParam = [];
 //Проверка принадлежат ли COOKIE пользователю
 if (isset($_COOKIE['user_id'])) {
-    if ($_COOKIE['user_id'] == $user['id']) {
+    if ((int)$_COOKIE['user_id'] === (int)$user['id']) {
         if (isset($_COOKIE['project_id'])) {
             $getParam["project_id"] = $_COOKIE['project_id'];
         }

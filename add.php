@@ -78,8 +78,7 @@ mysqli_stmt_bind_param($stmt, "iisss", $userData["id"], $taskItem["project"], $t
 $res = mysqli_stmt_execute($stmt);
 if ($res) {
     $task_id = mysqli_insert_id($link);
-    //header("Location: /?project_id=" . $taskItem["project"]);
-    header("Location: /");
+    header("Location: /index.php");
 }
 
 output:
