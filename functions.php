@@ -223,23 +223,12 @@ function get_task_filter($task_filter)
     $filter_array["tomorrow"] = " AND tasks.date_deadline = DATE_ADD( CURDATE(),Interval 1 DAY)";
     $filter_array["overdue"] = " AND tasks.date_deadline <= DATE_ADD( CURDATE(), INTERVAL - 1 DAY )";
     $filter_array["all"] = "";
-    /*
     $dateFilter = "";
-    switch ($task_filter) {
-        case "today":
-            $dateFilter .= " AND tasks.date_deadline = CURDATE()";
-            break;
-        case "tomorrow":
-            $dateFilter .= " AND tasks.date_deadline = DATE_ADD( CURDATE(),Interval 1 DAY)";
-            break;
-        case "overdue":
-            $dateFilter .= " AND tasks.date_deadline <= DATE_ADD( CURDATE(), INTERVAL - 1 DAY )";
-            break;
-    }*/
-    $dateFilter = $filter_array[$task_filter];
+    if (is_task_filter()) {
+        $dateFilter = $filter_array[$task_filter];
+    }
     return $dateFilter;
 }
-
 
 /**
  * Возвращает true если такого Названия проекта нет, в противном случае false
