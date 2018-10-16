@@ -224,7 +224,7 @@ function get_task_filter($task_filter)
     $filter_array["overdue"] = " AND tasks.date_deadline <= DATE_ADD( CURDATE(), INTERVAL - 1 DAY )";
     $filter_array["all"] = "";
     $dateFilter = "";
-    if (is_task_filter()) {
+    if (is_task_filter($task_filter)) {
         $dateFilter = $filter_array[$task_filter];
     }
     return $dateFilter;
