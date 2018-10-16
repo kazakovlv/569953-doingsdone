@@ -10,7 +10,7 @@ foreach ($required as $key) {
 
 $errors = []; //Ошибки регистрации
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+if ((string)$_SERVER["REQUEST_METHOD"] !== "POST") {
     goto output;
 }
 

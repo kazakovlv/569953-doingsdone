@@ -11,7 +11,7 @@ foreach ($required as $key) {
 $errors = [];
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] != "POST") {
+if ((string)$_SERVER["REQUEST_METHOD"] !== "POST") {
     goto end_of_post;
 }
 

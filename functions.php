@@ -51,7 +51,7 @@ function summTask($ListTasks, $projectId)
 function isImportant($checking_date)
 {
     $marker = "";
-    if ($checking_date != "1970-01-01 00:00:00") {
+    if ((string)$checking_date !== "1970-01-01 00:00:00") {
         $checking_timestamp = strtotime($checking_date);
         $now = time();
         $checking_timestamp = floor(($checking_timestamp - $now) / 3600);
@@ -202,14 +202,7 @@ function switch_task_status($link, $task_id, $user_id)
     $res = mysqli_fetch_all($res, MYSQLI_ASSOC);
     $sql_where[0] = "UPDATE tasks SET `status` = 1, tasks.date_completion = NOW() WHERE id = ?";
     $sql_where[1] = "UPDATE tasks SET `status` = 0, tasks.date_completion = '1970-01-01' WHERE id = ?";
-    if (count($res) == 1) {
-        /*
-         if ($res[0]["status"] == 0) {
-            $sql = "UPDATE tasks SET `status` = 1, tasks.date_completion = NOW() WHERE id = ?";
-        } else {
-            $sql = "UPDATE tasks SET `status` = 0, tasks.date_completion = '1970-01-01' WHERE id = ?";
-        }
-        */
+    if ((int)count($res) === 1) {
         $sql = $sql_where[$res[0]["status"]];
         $stmt = mysqli_prepare($link, $sql);
         mysqli_stmt_bind_param($stmt, "i", $task_id);
@@ -268,7 +261,7 @@ function check_project_name($link, $user_id, $project_name)
     $res = mysqli_stmt_get_result($stmt);
     $res = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
-    if (count($res) == 0) {
+    if ((int)count($res) === 0) {
         $answer = true;
     }
     return $answer;
@@ -354,7 +347,7 @@ function is_user_task($link, $user_id, $task_id)
         $res = mysqli_stmt_get_result($stmt);
         $res = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
-        if (count($res) == 1) {
+        if ((int)count($res) === 1) {
             $answer = true;
         }
     }
@@ -381,7 +374,7 @@ function is_user_project($link, $user_id, $project_id)
         $res = mysqli_stmt_get_result($stmt);
         $res = mysqli_fetch_all($res, MYSQLI_ASSOC);
 
-        if (count($res) === 1) {
+        if ((int)count($res) === 1) {
             $answer = true;
         }
     }

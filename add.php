@@ -28,7 +28,7 @@ $res = mysqli_stmt_get_result($stmt);
 $projectList = mysqli_fetch_all($res, MYSQLI_ASSOC);
 $taskItem = [];
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+if ((string)$_SERVER["REQUEST_METHOD"] !== "POST") {
     $page_content = include_template("add.php", ["projectList" => $projectList, "taskItem" => $taskItem]);
     goto output;
 }
@@ -61,7 +61,7 @@ if (count($errors)) {
     goto output;
 }
 
-if (isset($_FILES["taskFile"]["tmp_name"]) && $_FILES["taskFile"]["error"] === 0) {
+if (isset($_FILES["taskFile"]["tmp_name"]) && (int)$_FILES["taskFile"]["error"] === 0) {
     $fileName = uniqid() . "." . pathinfo($_FILES["taskFile"]["name"], PATHINFO_EXTENSION);
     if (!file_exists("uploads/")) {
         mkdir("uploads/");
